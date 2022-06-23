@@ -1,0 +1,12 @@
+{
+    "name": "wheatsystem-tests",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "build": "tsc"
+    },
+    "dependencies": {
+        "wheatbytecode-asm": "github:ostracod/wheatbytecode-asm#master"
+    },
+    "devDependencies": {}
+}

@@ -1,0 +1,25 @@
+lockfileVersion: 5.4
+
+specifiers:
+  wheatbytecode-asm: github:ostracod/wheatbytecode-asm#master
+
+dependencies:
+  wheatbytecode-asm: github.com/ostracod/wheatbytecode-asm/d80fcaabda30739e46f6bd25453a62e82c2830b8
+
+packages:
+
+  github.com/ostracod/wheatbytecode-asm/d80fcaabda30739e46f6bd25453a62e82c2830b8:
+    resolution: {tarball: https://codeload.github.com/ostracod/wheatbytecode-asm/tar.gz/d80fcaabda30739e46f6bd25453a62e82c2830b8}
+    name: wheatbytecode-asm
+    version: 1.0.0
+    requiresBuild: true
+    dependencies:
+      wheatsystem-spec: github.com/ostracod/wheatsystem-spec/55213397d410f0355f9bb7fa7d31ec0e8dd69a2e
+    dev: false
+
+  github.com/ostracod/wheatsystem-spec/55213397d410f0355f9bb7fa7d31ec0e8dd69a2e:
+    resolution: {tarball: https://codeload.github.com/ostracod/wheatsystem-spec/tar.gz/55213397d410f0355f9bb7fa7d31ec0e8dd69a2e}
+    name: wheatsystem-spec
+    version: 1.0.0
+    requiresBuild: true
+    dev: false
