@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as pathUtils from "path";
 import { fileURLToPath } from "url";
 import * as net from "net";
+import { Assembler, InstructionType } from "wheatbytecode-asm";
 
 enum PacketType {
     ProcessLaunched = 1,
@@ -25,6 +26,10 @@ const projectDirectoryPath = pathUtils.dirname(currentDirectoryPath);
 const socketPath = pathUtils.join(projectDirectoryPath, "testSocket");
 const testSuitesDirectoryPath = pathUtils.join(projectDirectoryPath, "testSuites");
 const packetHeaderSize = 5;
+const extraInstructionTypes = [
+    new InstructionType("logTestData", 0xF0, 1),
+    new InstructionType("haltTest", 0xF1, 0),
+];
 
 let socketClient: net.Socket;
 let receivedSocketData = Buffer.alloc(0);
@@ -49,12 +54,12 @@ class Packet {
         return textList.join("");
     }
     
-    send(): void {
+    async send(): Promise<void> {
         const header = Buffer.alloc(packetHeaderSize);
         header.writeInt8(this.type, 0);
         const bodyLength = (this.body === null) ? 0 : this.body.length;
         header.writeInt32LE(bodyLength, 1);
-        socketClient.write(header);
+        await socketClient.write(header);
         if (bodyLength > 0) {
             socketClient.write(this.body);
         }
@@ -71,6 +76,18 @@ class Test {
         this.files = [];
         this.expectedValues = [];
     }
+    
+    async run(): Promise<void> {
+        console.log(`Running test "${this.name}"...`);
+        await sendSimplePacket(PacketType.ResetState);
+        for (const file of this.files) {
+            await file.send();
+        }
+        await sendSimplePacket(PacketType.StartSystem);
+        // TODO: Receive and validate test data.
+        
+        console.log(`Finished running test "${this.name}".`);
+    }
 }
 
 abstract class TestFile {
@@ -85,12 +102,33 @@ abstract class TestFile {
         this.isGuarded = isGuarded;
         this.lines = [];
     }
+    
+    abstract createContentBuffer(): Buffer;
+    
+    async send(): Promise<void> {
+        const header = Buffer.from([this.name.length, this.type, this.isGuarded ? 1 : 0]);
+        const body = Buffer.concat([
+            header,
+            Buffer.from(this.name),
+            this.createContentBuffer(),
+        ]);
+        const packet = new Packet(PacketType.CreateFile, body);
+        await packet.send();
+    }
 }
 
 class BytecodeFile extends TestFile {
     
     constructor(name: string, isGuarded: boolean) {
         super(name, FileType.BytecodeApp, isGuarded);
+    }
+    
+    createContentBuffer(): Buffer {
+        const assembler = new Assembler({
+            shouldPrintLog: false,
+            extraInstructionTypes,
+        });
+        return assembler.assembleCodeLines(this.lines);
     }
 }
 
@@ -129,6 +167,11 @@ const receivePacket = (): Promise<Packet> => new Promise((resolve, reject) => {
         handlePacket = resolve;
     }
 });
+
+const sendSimplePacket = async (type: PacketType): Promise<void> => {
+    const packet = new Packet(type);
+    await packet.send();
+};
 
 const createSocket = (): Promise<net.Server> => new Promise(async (resolve, reject) => {
     console.log("Creating test socket...");
@@ -206,20 +249,27 @@ const parseTests = (lines: string[]): Test[] => {
 const runTestSuite = async (path: string): Promise<void> => {
     const lines = fs.readFileSync(path, "utf8").split("\n");
     const tests = parseTests(lines);
-    // TODO: Run the tests.
-    
+    for (const test of tests) {
+        await test.run();
+    }
 };
 
 const runTestSuites = async (): Promise<void> => {
-    //const socketServer = await createSocket();
+    const socketServer = await createSocket();
+    console.log("Waiting for launch packet...");
+    const packet = await receivePacket();
+    if (packet.type !== PacketType.ProcessLaunched) {
+        throw new Error(`Unexpected packet type ${packet.type}!`);
+    }
+    console.log("Running test suites...");
     const fileNames = fs.readdirSync(testSuitesDirectoryPath);
     for (const fileName of fileNames) {
         const filePath = pathUtils.join(testSuitesDirectoryPath, fileName);
         await runTestSuite(filePath);
     }
-    //console.log("Closing test socket...");
-    //await socketServer.close();
-    console.log("Finished running tests.");
+    console.log("Finished running test suites.");
+    await sendSimplePacket(PacketType.QuitProcess);
+    await socketServer.close();
 };
 
 runTestSuites();
