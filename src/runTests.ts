@@ -77,7 +77,7 @@ class Test {
         this.expectedValues = [];
     }
     
-    async run(): Promise<void> {
+    async run(): Promise<boolean> {
         console.log(`Running test "${this.name}"...`);
         await sendSimplePacket(PacketType.ResetState);
         for (const file of this.files) {
@@ -96,9 +96,24 @@ class Test {
                 throw new Error(`Unexpected packet type ${packet.type}!`);
             }
         }
-        // TODO: Check whether loggedValues is correct.
-        
+        let testPassed = true;
+        if (loggedValues.length !== this.expectedValues.length) {
+            testPassed = false;
+        } else {
+            for (let index = 0; index < loggedValues.length; index++) {
+                if (loggedValues[index] !== this.expectedValues[index]) {
+                    testPassed = false;
+                    break;
+                }
+            }
+        }
+        if (testPassed) {
+            console.log("Test passed.");
+        } else {
+            console.log(`Test failed!\nExpected values:\n${this.expectedValues.join(",")}\nLogged values:\n${loggedValues.join(",")}`);
+        }
         console.log(`Finished running test "${this.name}".`);
+        return testPassed;
     }
 }
 
@@ -141,6 +156,22 @@ class BytecodeFile extends TestFile {
             extraInstructionTypes,
         });
         return assembler.assembleCodeLines(this.lines);
+    }
+}
+
+class TestResult {
+    suiteFileName: string;
+    testName: string;
+    testPassed: boolean;
+    
+    constructor(suiteFileName: string, testName: string, testPassed: boolean) {
+        this.suiteFileName = suiteFileName;
+        this.testName = testName;
+        this.testPassed = testPassed;
+    }
+    
+    toString(): string {
+        return `Suite = "${this.suiteFileName}"; Test = "${this.testName}"; Result = ${this.testPassed ? "passed" : "failed"}`;
     }
 }
 
@@ -257,15 +288,18 @@ const parseTests = (lines: string[]): Test[] => {
     return output;
 }
 
-const runTestSuite = async (fileName: string): Promise<void> => {
+const runTestSuite = async (fileName: string): Promise<TestResult[]> => {
     console.log(`Running test suite "${fileName}"...`);
+    const output: TestResult[] = [];
     const filePath = pathUtils.join(testSuitesDirectoryPath, fileName);
     const lines = fs.readFileSync(filePath, "utf8").split("\n");
     const tests = parseTests(lines);
     for (const test of tests) {
-        await test.run();
+        const testPassed = await test.run();
+        output.push(new TestResult(fileName, test.name, testPassed));
     }
     console.log(`Finished running test suite "${fileName}".`);
+    return output;
 };
 
 const runTestSuites = async (): Promise<void> => {
@@ -276,13 +310,32 @@ const runTestSuites = async (): Promise<void> => {
         throw new Error(`Unexpected packet type ${packet.type}!`);
     }
     console.log("Running test suites...");
+    const testResults: TestResult[] = [];
     const fileNames = fs.readdirSync(testSuitesDirectoryPath);
     for (const fileName of fileNames) {
-        await runTestSuite(fileName);
+        const suiteTestResults = await runTestSuite(fileName);
+        suiteTestResults.forEach((testResult) => {
+            testResults.push(testResult);
+        });
     }
     console.log("Finished running test suites.");
     await sendSimplePacket(PacketType.QuitProcess);
     await socketServer.close();
+    let passCount = 0;
+    let failCount = 0;
+    console.log("========================================");
+    testResults.forEach((testResult) => {
+        if (testResult.testPassed) {
+            passCount += 1;
+        } else {
+            console.log(testResult.toString());
+            failCount += 1;
+        }
+    });
+    if (failCount <= 0) {
+        console.log("No test failures!");
+    }
+    console.log(`Test pass rate: ${passCount} / ${testResults.length}`);
 };
 
 runTestSuites();
