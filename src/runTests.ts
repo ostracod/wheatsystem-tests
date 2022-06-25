@@ -4,32 +4,91 @@ import * as pathUtils from "path";
 import { fileURLToPath } from "url";
 import * as net from "net";
 
+enum PacketType {
+    ProcessLaunched = 1,
+    DataLogged = 2,
+    SystemHalted = 3,
+    ResetState = 4,
+    CreateFile = 5,
+    StartSystem = 6,
+    QuitProcess = 7,
+}
+
 const currentDirectoryPath = pathUtils.dirname(fileURLToPath(import.meta.url));
 const projectDirectoryPath = pathUtils.dirname(currentDirectoryPath);
 const socketPath = pathUtils.join(projectDirectoryPath, "testSocket");
-const packetHeaderSize = 4;
+const packetHeaderSize = 5;
 
 let socketClient: net.Socket;
 let receivedSocketData = Buffer.alloc(0);
+const packetQueue: Packet[] = [];
+let handlePacket: ((packet: Packet) => void) | null = null;
 
-const handlePacket = (data: Buffer): void => {
-    console.log("Received data from test socket: " + data.toString("hex"));
-};
+class Packet {
+    type: PacketType;
+    body: Buffer | null;
+    
+    constructor(type, body: Buffer | null = null) {
+        this.type = type;
+        this.body = body;
+    }
+    
+    toString() {
+        const textList: string[] = ["(type = " + this.type];
+        if (this.body !== null) {
+            textList.push("; body = " + this.body.toString("hex"));
+        }
+        textList.push(")");
+        return textList.join("");
+    }
+    
+    send(): void {
+        const header = Buffer.alloc(packetHeaderSize);
+        header.writeInt8(this.type, 0);
+        const bodyLength = (this.body === null) ? 0 : this.body.length;
+        header.writeInt32LE(bodyLength, 1);
+        socketClient.write(header);
+        if (bodyLength > 0) {
+            socketClient.write(this.body);
+        }
+    };
+}
 
 const handleSocketData = (buffer: Buffer): void => {
     receivedSocketData = Buffer.concat([receivedSocketData, buffer]);
     if (receivedSocketData.length < packetHeaderSize) {
         return;
     }
-    const length = receivedSocketData.readInt32LE(0);
-    let endIndex = packetHeaderSize + length;
+    const type = receivedSocketData.readInt8(0);
+    const bodyLength = receivedSocketData.readInt32LE(1);
+    let endIndex = packetHeaderSize + bodyLength;
     if (receivedSocketData.length < endIndex) {
         return;
     }
-    let packetData = receivedSocketData.subarray(packetHeaderSize, endIndex);
+    let body: Buffer | null;
+    if (bodyLength > 0) {
+        body = receivedSocketData.subarray(packetHeaderSize, endIndex);
+    } else {
+        body = null;
+    }
     receivedSocketData = receivedSocketData.subarray(endIndex, receivedSocketData.length);
-    handlePacket(packetData);
+    const packet = new Packet(type, body);
+    if (handlePacket === null) {
+        packetQueue.push(packet);
+    } else {
+        const tempHandle = handlePacket;
+        handlePacket = null;
+        tempHandle(packet);
+    }
 };
+
+const receivePacket = (): Promise<Packet> => new Promise((resolve, reject) => {
+    if (packetQueue.length > 0) {
+        resolve(packetQueue.shift());
+    } else {
+        handlePacket = resolve;
+    }
+});
 
 const createSocket = (): Promise<net.Server> => new Promise(async (resolve, reject) => {
     console.log("Creating test socket...");
@@ -47,23 +106,18 @@ const createSocket = (): Promise<net.Server> => new Promise(async (resolve, reje
     console.log("Waiting for WheatSystem to start...");
 });
 
-const sendPacket = (data: Buffer): void => {
-    const header = Buffer.alloc(packetHeaderSize);
-    header.writeInt32LE(data.length, 0);
-    socketClient.write(header);
-    socketClient.write(data);
+const runTest = async (): Promise<void> => {
+    while (true) {
+        const outputPacket = new Packet(PacketType.ResetState);
+        console.log("Sending packet to test socket: " + outputPacket.toString());
+        outputPacket.send();
+        const inputPacket = await receivePacket();
+        console.log("Received packet from test socket: " + inputPacket.toString());
+        await new Promise((resolve, reject) => {
+            setTimeout(resolve, 1000);
+        });
+    };
 };
-
-const runTest = (): Promise<void> => new Promise((resolve, reject) => {
-    let count = 0;
-    setInterval(() => {
-        const buffer = Buffer.alloc(4);
-        buffer.writeInt32LE(count, 0);
-        count += 1;
-        console.log("Sending data to test socket: " + buffer.toString("hex"));
-        sendPacket(buffer);
-    }, 1000);
-});
 
 const runTests = async (): Promise<void> => {
     const socketServer = await createSocket();
