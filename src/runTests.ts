@@ -27,8 +27,8 @@ const socketPath = pathUtils.join(projectDirectoryPath, "testSocket");
 const testSuitesDirectoryPath = pathUtils.join(projectDirectoryPath, "testSuites");
 const packetHeaderSize = 5;
 const extraInstructionTypes = [
-    new InstructionType("logTestData", 0xF0, 1),
-    new InstructionType("haltTest", 0xF1, 0),
+    new InstructionType("logTestData", 0xC0, 1),
+    new InstructionType("haltTest", 0xC1, 0),
 ];
 
 let socketClient: net.Socket;
@@ -84,7 +84,19 @@ class Test {
             await file.send();
         }
         await sendSimplePacket(PacketType.StartSystem);
-        // TODO: Receive and validate test data.
+        const loggedValues: number[] = [];
+        while (true) {
+            const packet = await receivePacket();
+            if (packet.type === PacketType.DataLogged) {
+                const value = packet.body.readInt32LE(0);
+                loggedValues.push(value);
+            } else if (packet.type === PacketType.SystemHalted) {
+                break;
+            } else {
+                throw new Error(`Unexpected packet type ${packet.type}!`);
+            }
+        }
+        // TODO: Check whether loggedValues is correct.
         
         console.log(`Finished running test "${this.name}".`);
     }
@@ -134,29 +146,28 @@ class BytecodeFile extends TestFile {
 
 const handleSocketData = (buffer: Buffer): void => {
     receivedSocketData = Buffer.concat([receivedSocketData, buffer]);
-    if (receivedSocketData.length < packetHeaderSize) {
-        return;
-    }
-    const type = receivedSocketData.readInt8(0);
-    const bodyLength = receivedSocketData.readInt32LE(1);
-    let endIndex = packetHeaderSize + bodyLength;
-    if (receivedSocketData.length < endIndex) {
-        return;
-    }
-    let body: Buffer | null;
-    if (bodyLength > 0) {
-        body = receivedSocketData.subarray(packetHeaderSize, endIndex);
-    } else {
-        body = null;
-    }
-    receivedSocketData = receivedSocketData.subarray(endIndex, receivedSocketData.length);
-    const packet = new Packet(type, body);
-    if (handlePacket === null) {
-        packetQueue.push(packet);
-    } else {
-        const tempHandle = handlePacket;
-        handlePacket = null;
-        tempHandle(packet);
+    while (receivedSocketData.length >= packetHeaderSize) {
+        const type = receivedSocketData.readInt8(0);
+        const bodyLength = receivedSocketData.readInt32LE(1);
+        let endIndex = packetHeaderSize + bodyLength;
+        if (receivedSocketData.length < endIndex) {
+            break;
+        }
+        let body: Buffer | null;
+        if (bodyLength > 0) {
+            body = receivedSocketData.subarray(packetHeaderSize, endIndex);
+        } else {
+            body = null;
+        }
+        receivedSocketData = receivedSocketData.subarray(endIndex, receivedSocketData.length);
+        const packet = new Packet(type, body);
+        if (handlePacket === null) {
+            packetQueue.push(packet);
+        } else {
+            const tempHandle = handlePacket;
+            handlePacket = null;
+            tempHandle(packet);
+        }
     }
 };
 
@@ -246,12 +257,15 @@ const parseTests = (lines: string[]): Test[] => {
     return output;
 }
 
-const runTestSuite = async (path: string): Promise<void> => {
-    const lines = fs.readFileSync(path, "utf8").split("\n");
+const runTestSuite = async (fileName: string): Promise<void> => {
+    console.log(`Running test suite "${fileName}"...`);
+    const filePath = pathUtils.join(testSuitesDirectoryPath, fileName);
+    const lines = fs.readFileSync(filePath, "utf8").split("\n");
     const tests = parseTests(lines);
     for (const test of tests) {
         await test.run();
     }
+    console.log(`Finished running test suite "${fileName}".`);
 };
 
 const runTestSuites = async (): Promise<void> => {
@@ -264,8 +278,7 @@ const runTestSuites = async (): Promise<void> => {
     console.log("Running test suites...");
     const fileNames = fs.readdirSync(testSuitesDirectoryPath);
     for (const fileName of fileNames) {
-        const filePath = pathUtils.join(testSuitesDirectoryPath, fileName);
-        await runTestSuite(filePath);
+        await runTestSuite(fileName);
     }
     console.log("Finished running test suites.");
     await sendSimplePacket(PacketType.QuitProcess);
