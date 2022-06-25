@@ -2,6 +2,7 @@
 import * as fs from "fs";
 import * as pathUtils from "path";
 import { fileURLToPath } from "url";
+import * as childProcess from "child_process";
 import * as net from "net";
 import { Assembler, InstructionType } from "wheatbytecode-asm";
 
@@ -25,16 +26,19 @@ const currentDirectoryPath = pathUtils.dirname(fileURLToPath(import.meta.url));
 const projectDirectoryPath = pathUtils.dirname(currentDirectoryPath);
 const socketPath = pathUtils.join(projectDirectoryPath, "testSocket");
 const testSuitesDirectoryPath = pathUtils.join(projectDirectoryPath, "testSuites");
+const launchScriptPath = pathUtils.join(projectDirectoryPath, "launchWheatSystem.bash");
 const packetHeaderSize = 5;
 const extraInstructionTypes = [
     new InstructionType("logTestData", 0xC0, 1),
     new InstructionType("haltTest", 0xC1, 0),
 ];
 
+let pendingSocketClient: net.Socket | null = null;
 let socketClient: net.Socket;
 let receivedSocketData = Buffer.alloc(0);
 const packetQueue: Packet[] = [];
 let handlePacket: ((packet: Packet) => void) | null = null;
+let handleSocketClient: ((client: net.Socket) => void) | null = null;
 
 class Packet {
     type: PacketType;
@@ -215,21 +219,38 @@ const sendSimplePacket = async (type: PacketType): Promise<void> => {
     await packet.send();
 };
 
-const createSocket = (): Promise<net.Server> => new Promise(async (resolve, reject) => {
+const createSocket = async (): Promise<net.Server> => {
     console.log("Creating test socket...");
     if (fs.existsSync(socketPath)) {
         fs.unlinkSync(socketPath);
     }
     const socketServer = net.createServer((client) => {
-        socketClient = client;
-        client.on("data", handleSocketData);
-        resolve(socketServer);
+        if (handleSocketClient === null) {
+            pendingSocketClient = client;
+        } else {
+            const tempHandle = handleSocketClient;
+            handleSocketClient = null;
+            tempHandle(client);
+        }
     });
     await socketServer.listen(socketPath);
     console.log("Test socket path:");
     console.log(socketPath);
     console.log("Waiting for WheatSystem to start...");
-});
+    return socketServer;
+};
+
+const waitForSocketClient = async (): Promise<net.Socket> => new Promise(
+    (resolve, reject) => {
+        if (pendingSocketClient === null) {
+            handleSocketClient = resolve;
+        } else {
+            const output = pendingSocketClient;
+            pendingSocketClient = null;
+            resolve(output);
+        }
+    },
+);
 
 const trimEnd = (text: string): string => {
     let endIndex = text.length;
@@ -304,6 +325,10 @@ const runTestSuite = async (fileName: string): Promise<TestResult[]> => {
 
 const runTestSuites = async (): Promise<void> => {
     const socketServer = await createSocket();
+    console.log("Launching WheatSystem...");
+    childProcess.spawn(launchScriptPath, [socketPath]);
+    socketClient = await waitForSocketClient();
+    socketClient.on("data", handleSocketData);
     console.log("Waiting for launch packet...");
     const packet = await receivePacket();
     if (packet.type !== PacketType.ProcessLaunched) {

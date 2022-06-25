@@ -18,8 +18,8 @@ To set up the tests:
 
 To run the tests:
 
+1. Update the contents of `launchWheatSystem.bash` to reference your implementation of WheatSystem.
 1. Start the test script: `node ./dist/runTests.js`
-1. Start your implementation of WheatSystem in integration testing mode, providing the domain socket path as an argument.
 1. Wait for the tests to finish.
 
 
