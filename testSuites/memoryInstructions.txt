@@ -1,0 +1,18 @@
+
+========================================
+
+>>> TEST wrt
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s32
+    wrt x, 123
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 123
+
+========================================
+
+
