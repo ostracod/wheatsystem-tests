@@ -1,0 +1,367 @@
+
+========================================
+
+>>> TEST constant
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    logTestData 12:s8
+    logTestData 1234:s32
+    setErrJmp handleErr
+    wrt 12, 34
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 12 1234 3
+
+========================================
+
+>>> TEST globalFrame
+
+>>> BYTECODE_FILE wsBoot 1
+VAR x, s8
+VAR y, s32
+FUNC init, init_ID
+    wrt x, 23
+    wrt y, 2345
+    logTestData x
+    logTestData y
+    haltTest
+END
+
+>>> EXPECT 23 2345
+
+========================================
+
+>>> TEST globalFrame_outOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+VAR x, s8, 10
+FUNC init, init_ID
+    VAR err, s8
+    setErrJmp handleErr1
+    wrt globalFrame[10]:s8, 23
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s8
+    wrt garbage, globalFrame[10]:s8
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 5 5
+
+========================================
+
+>>> TEST localFrame
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    VAR y, s32
+    wrt x, 34
+    wrt y, 3456
+    logTestData x
+    logTestData y
+    haltTest
+END
+
+>>> EXPECT 34 3456
+
+========================================
+
+>>> TEST localFrame_outOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+VAR err, s8
+VAR garbage, s8
+FUNC init, init_ID
+    VAR x, s8, 10
+    setErrJmp handleErr1
+    wrt localFrame[10]:s8, 34
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    wrt garbage, localFrame[10]:s8
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 5 5
+
+========================================
+
+>>> TEST prevArgFrame
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    newArgFrame 5
+    call test
+END
+FUNC test
+    ARG x, s8
+    ARG y, s32
+    wrt x, 45
+    wrt y, 4567
+    logTestData x
+    logTestData y
+END
+
+>>> EXPECT 45 4567
+
+========================================
+
+>>> TEST prevArgFrame_outOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    newArgFrame 10
+    call test
+END
+FUNC test
+    ARG x, s8, 10
+    VAR err, s8
+    setErrJmp handleErr1
+    wrt prevArgFrame[10]:s8, 45
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s8
+    wrt garbage, prevArgFrame[10]:s8
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 5 5
+
+========================================
+
+>>> TEST nextArgFrame
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    newArgFrame 5
+    wrt nextArgFrame[0]:s8, 56
+    wrt nextArgFrame[1]:s32, 5678
+    logTestData nextArgFrame[0]:s8
+    logTestData nextArgFrame[1]:s32
+    haltTest
+END
+
+>>> EXPECT 56 5678
+
+========================================
+
+>>> TEST nextArgFrame_outOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR err, s8
+    newArgFrame 10
+    setErrJmp handleErr1
+    wrt nextArgFrame[10]:s8, 56
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s8
+    wrt garbage, nextArgFrame[10]:s8
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 5 5
+
+========================================
+
+>>> TEST appData
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    logTestData appData[0]:s8
+    logTestData appData[1]:s32
+    setErrJmp handleErr
+    wrt appData[0]:s8, 67
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+APP_DATA
+    DATA 67:s8, 6789:s32
+END
+
+>>> EXPECT 67 6789 3
+
+========================================
+
+>>> TEST appData_outOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    setErrJmp handleErr
+    VAR garbage, s8
+    wrt garbage, appData[10]:s8
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+APP_DATA
+    DATA 6789:s32, 6789:s32, 67:s8, 67:s8
+END
+
+>>> EXPECT 5
+
+========================================
+
+>>> TEST heapAlloc
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc, s32
+    newAlloc alloc, 0, 5
+    wrt alloc[0]:s8, 78
+    wrt alloc[1]:s32, 7890
+    logTestData alloc[0]:s8
+    logTestData alloc[1]:s32
+    haltTest
+END
+
+>>> EXPECT 78 7890
+
+========================================
+
+>>> TEST heapAlloc_outOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc, s32
+    VAR err, s8
+    newAlloc alloc, 0, 10
+    setErrJmp handleErr1
+    wrt alloc[10]:s8, 78
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s8
+    wrt garbage, alloc[10]:s8
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 5 5
+
+========================================
+
+>>> TEST heapAlloc_null
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR err, s8
+    setErrJmp handleErr1
+    wrt null[0]:s8, 78
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s8
+    wrt garbage, null[0]:s8
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 7 7
+
+========================================
+
+>>> TEST heapAlloc_invalidPtr
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR err, s8
+    setErrJmp handleErr1
+    wrt 9999[0]:s8, 78
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s8
+    wrt garbage, 9999[0]:s8
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 6 6
+
+========================================
+
+>>> TEST variableIndex
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR index, s8
+    VAR alloc, s32
+    newAlloc alloc, 0, 12
+    wrt index, 0
+    wrt alloc[index]:s32, 123
+    wrt index, 4
+    wrt alloc[index]:s32, 234
+    wrt index, 8
+    wrt alloc[index]:s32, 345
+    wrt index, 0
+    logTestData alloc[index]:s32
+    wrt index, 4
+    logTestData alloc[index]:s32
+    wrt index, 8
+    logTestData alloc[index]:s32
+    haltTest
+END
+
+>>> EXPECT 123 234 345
+
+========================================
+
+
