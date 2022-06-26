@@ -169,4 +169,195 @@ END
 
 ========================================
 
+>>> TEST newAlloc
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc, s32
+    newAlloc alloc, 0, 2
+    wrt alloc[0]:s8, 34
+    wrt alloc[1]:s8, 45
+    logTestData alloc[0]:s8
+    logTestData alloc[1]:s8
+    haltTest
+END
+
+>>> EXPECT 34 45
+
+========================================
+
+>>> TEST newAlloc_negativeSize
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc, s32
+    setErrJmp handleErr
+    newAlloc alloc, 0, -1
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 4
+
+========================================
+
+>>> TEST delAlloc
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc, s32
+    newAlloc alloc, 0, 2
+    delAlloc alloc
+    setErrJmp handleErr
+    VAR garbage, s32
+    wrt garbage, alloc[0]:s8
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 6
+
+========================================
+
+>>> TEST delAlloc_invalidPtr
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    setErrJmp handleErr
+    delAlloc 9999
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 6
+
+========================================
+
+>>> TEST allocAttrs
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc, s32
+    VAR attrs, s8
+    newAlloc alloc, 0, 2
+    allocAttrs attrs, alloc
+    logTestData attrs
+    newAlloc alloc, 1, 2
+    allocAttrs attrs, alloc
+    logTestData attrs
+    newAlloc alloc, 2, 2
+    allocAttrs attrs, alloc
+    logTestData attrs
+    newAlloc alloc, 3, 2
+    allocAttrs attrs, alloc
+    logTestData attrs
+    haltTest
+END
+
+>>> EXPECT 0 1 2 3
+
+========================================
+
+>>> TEST allocSize
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc, s32
+    VAR size, s8
+    newAlloc alloc, 0, 5
+    allocSize size, alloc
+    logTestData size
+    newAlloc alloc, 0, 10
+    allocSize size, alloc
+    logTestData size
+    haltTest
+END
+
+>>> EXPECT 5 10
+
+========================================
+
+>>> TEST allocCreator
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc1, s32
+    VAR alloc2, s32
+    newAlloc alloc1, 0, 5
+    VAR thisHandle, s32
+    VAR xName, s32
+    VAR xHandle, s32
+    VAR testIndex, s32
+    thisApp thisHandle
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    findFunc testIndex, xHandle, -1
+    newArgFrame 4
+    callRemote xHandle, testIndex
+    wrt alloc2, nextArgFrame[0]:s32
+    VAR creator1, s32
+    VAR creator2, s32
+    allocCreator creator1, alloc1
+    allocCreator creator2, alloc2
+    VAR isEqual, s8
+    equ isEqual, creator1, thisHandle
+    logTestData isEqual
+    equ isEqual, creator1, xHandle
+    logTestData isEqual
+    equ isEqual, creator2, thisHandle
+    logTestData isEqual
+    equ isEqual, creator2, xHandle
+    logTestData isEqual
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test, -1
+    ARG alloc, s32
+    newAlloc alloc, 0, 5
+END
+
+>>> EXPECT 1 0 0 1
+
+========================================
+
+>>> TEST setAllocAttrs
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc, s32
+    VAR attrs, s8
+    newAlloc alloc, 0, 2
+    setAllocAttrs alloc, 3
+    allocAttrs attrs, alloc
+    logTestData attrs
+    setAllocAttrs alloc, 2
+    allocAttrs attrs, alloc
+    logTestData attrs
+    setAllocAttrs alloc, 1
+    allocAttrs attrs, alloc
+    logTestData attrs
+    setAllocAttrs alloc, 0
+    allocAttrs attrs, alloc
+    logTestData attrs
+    haltTest
+END
+
+>>> EXPECT 3 2 1 0
+
+========================================
+
 
