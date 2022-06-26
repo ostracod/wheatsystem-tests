@@ -199,6 +199,24 @@ END
 
 ========================================
 
+>>> TEST nextArgFrame_missing
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    setErrJmp handleErr
+    wrt nextArgFrame[0]:s8, 56
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 9
+
+========================================
+
 >>> TEST appData
 
 >>> BYTECODE_FILE wsBoot 1
