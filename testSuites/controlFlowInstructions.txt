@@ -1,0 +1,127 @@
+
+========================================
+
+>>> TEST jmp
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    logTestData 1
+    jmp skip
+    logTestData 2
+    LBL skip
+    logTestData 3
+    haltTest
+END
+
+>>> EXPECT 1 3
+
+========================================
+
+>>> TEST jmp_outOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    setErrJmp handleErr
+    jmp 9999
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 5
+
+========================================
+
+>>> TEST jmpZ
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    logTestData 1
+    jmpZ skip1, 0
+    logTestData 2
+    LBL skip1
+    jmpZ skip2, 1
+    logTestData 3
+    LBL skip2
+    logTestData 4
+    haltTest
+END
+
+>>> EXPECT 1 3 4
+
+========================================
+
+>>> TEST jmpNZ
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    logTestData 1
+    jmpNZ skip1, 0
+    logTestData 2
+    LBL skip1
+    jmpNZ skip2, 1
+    logTestData 3
+    LBL skip2
+    logTestData 4
+    haltTest
+END
+
+>>> EXPECT 1 2 4
+
+========================================
+
+>>> TEST wait_resume
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    VAR testIndex, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    findFunc testIndex, xHandle, -1
+    callRemote xHandle, testIndex
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+    logTestData 10
+    wait
+    logTestData 30
+    haltTest
+END
+FUNC test, -1
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    logTestData 20
+    resume
+END
+
+>>> EXPECT 10 20 30
+
+========================================
+
+>>> TEST resume_wait
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    logTestData 40
+    resume
+    logTestData 50
+    wait
+    logTestData 60
+    haltTest
+END
+
+>>> EXPECT 40 50 60
+
+========================================
+
+

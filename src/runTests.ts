@@ -309,21 +309,22 @@ const parseTests = (lines: string[]): Test[] => {
     return output;
 }
 
-const runTestSuite = async (fileName: string): Promise<TestResult[]> => {
+const runTestSuite = async (
+    resultsDestination: TestResult[],
+    fileName: string,
+): Promise<void> => {
     console.log(`Running test suite "${fileName}"...`);
-    const output: TestResult[] = [];
     const filePath = pathUtils.join(testSuitesDirectoryPath, fileName);
     const lines = fs.readFileSync(filePath, "utf8").split("\n");
     const tests = parseTests(lines);
     for (const test of tests) {
         const testPassed = await test.run();
-        output.push(new TestResult(fileName, test.name, testPassed));
+        resultsDestination.push(new TestResult(fileName, test.name, testPassed));
     }
     console.log(`Finished running test suite "${fileName}".`);
-    return output;
 };
 
-const runTestSuites = async (): Promise<void> => {
+const main = async (suiteFileName: string | null): Promise<void> => {
     const socketServer = await createSocket();
     console.log("Launching WheatSystem...");
     childProcess.spawn(launchScriptPath, [socketPath]);
@@ -334,16 +335,17 @@ const runTestSuites = async (): Promise<void> => {
     if (packet.type !== PacketType.ProcessLaunched) {
         throw new Error(`Unexpected packet type ${packet.type}!`);
     }
-    console.log("Running test suites...");
     const testResults: TestResult[] = [];
-    const fileNames = fs.readdirSync(testSuitesDirectoryPath);
-    for (const fileName of fileNames) {
-        const suiteTestResults = await runTestSuite(fileName);
-        suiteTestResults.forEach((testResult) => {
-            testResults.push(testResult);
-        });
+    if (suiteFileName === null) {
+        console.log("Running all test suites...");
+        const fileNames = fs.readdirSync(testSuitesDirectoryPath);
+        for (const fileName of fileNames) {
+            await runTestSuite(testResults, fileName);
+        }
+        console.log("Finished running test suites.");
+    } else {
+        await runTestSuite(testResults, suiteFileName);
     }
-    console.log("Finished running test suites.");
     await sendSimplePacket(PacketType.QuitProcess);
     await socketServer.close();
     let passCount = 0;
@@ -363,6 +365,15 @@ const runTestSuites = async (): Promise<void> => {
     console.log(`Test pass rate: ${passCount} / ${testResults.length}`);
 };
 
-runTestSuites();
+let suiteFileName: string | null;
+if (process.argv.length === 2) {
+    suiteFileName = null;
+} else if (process.argv.length === 3) {
+    suiteFileName = process.argv[2];
+} else {
+    console.log("Usage: node ./dist/runTests.js (suiteFileName?)");
+    process.exit(1);
+}
+main(suiteFileName);
 
 
