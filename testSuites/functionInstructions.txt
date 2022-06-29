@@ -1,0 +1,148 @@
+
+========================================
+
+>>> TEST findFunc
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC test1, -10
+END
+FUNC test2, -20
+END
+FUNC test3, -30
+END
+FUNC init, init_ID
+    VAR thisHandle, s32
+    thisApp thisHandle
+    VAR index, s8
+    findFunc index, thisHandle, -30
+    logTestData index
+    findFunc index, thisHandle, -20
+    logTestData index
+    findFunc index, thisHandle, -15
+    logTestData index
+    findFunc index, thisHandle, -10
+    logTestData index
+    haltTest
+END
+
+>>> EXPECT 2 1 -1 0
+
+========================================
+
+>>> TEST findFunc_runningApp
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR index, s8
+    findFunc index, xHandle, -10
+    logTestData index
+    setErrJmp handleErr1
+    callRemote xHandle, index
+    LBL handleErr1
+    setErrJmp handleErr2
+    findFunc index, xHandle, -20
+    haltTest
+    LBL handleErr2
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test1, -10
+    quitApp
+END
+FUNC test2, -20
+END
+
+>>> EXPECT 0 11
+
+========================================
+
+>>> TEST call_sequential
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC test1
+    logTestData 40
+END
+FUNC test2
+    logTestData 50
+END
+FUNC test3
+    logTestData 60
+END
+FUNC init, init_ID
+    logTestData 1
+    call test1
+    logTestData 2
+    call test2
+    logTestData 3
+    call test3
+    logTestData 4
+    haltTest
+END
+
+>>> EXPECT 1 40 2 50 3 60 4
+
+========================================
+
+>>> TEST call_nested
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC test1
+    logTestData 40
+    call test2
+    logTestData 45
+END
+FUNC test2
+    logTestData 50
+    call test3
+    logTestData 55
+END
+FUNC test3
+    logTestData 60
+END
+FUNC init, init_ID
+    logTestData 1
+    call test1
+    logTestData 2
+    haltTest
+END
+
+>>> EXPECT 1 40 50 60 55 45 2
+
+========================================
+
+
+>>> TEST call_invalidIndex
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC test1
+END
+FUNC test2
+END
+FUNC test3
+END
+FUNC init, init_ID
+    setErrJmp handleErr
+    call 4
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 5
+
+========================================
+
+

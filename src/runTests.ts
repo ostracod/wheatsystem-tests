@@ -4,7 +4,7 @@ import * as pathUtils from "path";
 import { fileURLToPath } from "url";
 import * as childProcess from "child_process";
 import * as net from "net";
-import { Assembler, InstructionType } from "wheatbytecode-asm";
+import { Assembler, InstructionType, AssemblyError } from "wheatbytecode-asm";
 
 enum PacketType {
     ProcessLaunched = 1,
@@ -335,34 +335,46 @@ const main = async (suiteFileName: string | null): Promise<void> => {
     if (packet.type !== PacketType.ProcessLaunched) {
         throw new Error(`Unexpected packet type ${packet.type}!`);
     }
-    const testResults: TestResult[] = [];
-    if (suiteFileName === null) {
-        console.log("Running all test suites...");
-        const fileNames = fs.readdirSync(testSuitesDirectoryPath);
-        for (const fileName of fileNames) {
-            await runTestSuite(testResults, fileName);
+    let testResults: TestResult[] | null = [];
+    try {
+        if (suiteFileName === null) {
+            console.log("Running all test suites...");
+            const fileNames = fs.readdirSync(testSuitesDirectoryPath);
+            for (const fileName of fileNames) {
+                await runTestSuite(testResults, fileName);
+            }
+            console.log("Finished running test suites.");
+        } else {
+            await runTestSuite(testResults, suiteFileName);
         }
-        console.log("Finished running test suites.");
-    } else {
-        await runTestSuite(testResults, suiteFileName);
+    } catch (error) {
+        if (error instanceof AssemblyError) {
+            console.log("Could not finish running tests because of an assembly error!");
+            console.log(error.getDisplayString());
+            testResults = null;
+        } else {
+            throw error
+        }
     }
     await sendSimplePacket(PacketType.QuitProcess);
     await socketServer.close();
-    let passCount = 0;
-    let failCount = 0;
-    console.log("========================================");
-    testResults.forEach((testResult) => {
-        if (testResult.testPassed) {
-            passCount += 1;
-        } else {
-            console.log(testResult.toString());
-            failCount += 1;
+    if (testResults !== null) {
+        let passCount = 0;
+        let failCount = 0;
+        console.log("========================================");
+        testResults.forEach((testResult) => {
+            if (testResult.testPassed) {
+                passCount += 1;
+            } else {
+                console.log(testResult.toString());
+                failCount += 1;
+            }
+        });
+        if (failCount <= 0) {
+            console.log("No test failures!");
         }
-    });
-    if (failCount <= 0) {
-        console.log("No test failures!");
+        console.log(`Test pass rate: ${passCount} / ${testResults.length}`);
     }
-    console.log(`Test pass rate: ${passCount} / ${testResults.length}`);
 };
 
 let suiteFileName: string | null;
