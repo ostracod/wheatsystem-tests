@@ -1,0 +1,96 @@
+
+========================================
+
+>>> TEST bNot
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    bNot x, 0xAC
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 83
+
+========================================
+
+>>> TEST bOr
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    bOr x, 0x33, 0x0F
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 63
+
+========================================
+
+>>> TEST bAnd
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    bAnd x, 0x33, 0x0F
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 3
+
+========================================
+
+>>> TEST bXor
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    bXor x, 0x33, 0x0F
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 60
+
+========================================
+
+>>> TEST bLeft
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    bLeft x, 0x14, 0
+    logTestData x
+    bLeft x, 0x14, 1
+    logTestData x
+    bLeft x, 0x14, 2
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 20 40 80
+
+========================================
+
+>>> TEST bRight
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    bRight x, 0x14, 0
+    logTestData x
+    bRight x, 0x14, 1
+    logTestData x
+    bRight x, 0x14, 2
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 20 10 5
+
+========================================
+
+

@@ -34,6 +34,25 @@ END
 
 ========================================
 
+>>> TEST jmp_notConstant
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    setErrJmp handleErr
+    VAR offset, s8
+    wrt offset, 0
+    jmp offset
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 3
+
+========================================
+
 >>> TEST jmpZ
 
 >>> BYTECODE_FILE wsBoot 1
