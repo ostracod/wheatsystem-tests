@@ -120,7 +120,6 @@ END
 
 ========================================
 
-
 >>> TEST call_invalidIndex
 
 >>> BYTECODE_FILE wsBoot 1
@@ -142,6 +141,186 @@ FUNC init, init_ID
 END
 
 >>> EXPECT 5
+
+========================================
+
+>>> TEST callRemote_sequential
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR index, s8
+    logTestData 4
+    findFunc index, xHandle, -10
+    callRemote xHandle, index
+    logTestData 5
+    findFunc index, xHandle, -20
+    callRemote xHandle, index
+    logTestData 6
+    findFunc index, xHandle, -30
+    callRemote xHandle, index
+    logTestData 7
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test1, -10
+    logTestData 10
+END
+FUNC test2, -20
+    logTestData 11
+END
+FUNC test3, -30
+    logTestData 12
+END
+
+>>> EXPECT 4 10 5 11 6 12 7
+
+========================================
+
+>>> TEST callRemote_nested
+
+>>> BYTECODE_FILE wsBoot 1
+VAR xHandle, s32
+FUNC init, init_ID
+    VAR xName, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR index, s8
+    logTestData 10
+    findFunc index, xHandle, -10
+    callRemote xHandle, index
+    logTestData 11
+END
+FUNC test, -15
+    logTestData 30
+    VAR index, s8
+    findFunc index, xHandle, -20
+    callRemote xHandle, index
+    logTestData 31
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test1, -10
+    logTestData 20
+    VAR bootName, s32
+    VAR bootHandle, s32
+    newAlloc bootName, 0, 6
+    wrtBuff bootName[0]:s8, appData[0]:s8, 6
+    openFile bootHandle, bootName
+    VAR index, s8
+    findFunc index, bootHandle, -15
+    callRemote bootHandle, index
+    logTestData 21
+END
+FUNC test2, -20
+    logTestData 40
+END
+APP_DATA
+    DATA "wsBoot"
+END
+
+>>> EXPECT 10 20 30 40 31 21 11
+
+========================================
+
+>>> TEST callRemote_invalidIndex
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    setErrJmp handleErr
+    callRemote xHandle, 1
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test, -10
+END
+
+>>> EXPECT 5
+
+========================================
+
+>>> TEST ret
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC test
+    logTestData 80
+    ret
+    logTestData 81
+END
+FUNC init, init_ID
+    logTestData 70
+    call test
+    logTestData 71
+    haltTest
+END
+
+>>> EXPECT 70 80 71
+
+========================================
+
+>>> TEST caller
+
+>>> BYTECODE_FILE wsBoot 1
+VAR xHandle, s32
+FUNC init, init_ID
+    call test
+    VAR xName, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR index, s8
+    findFunc index, xHandle, -2
+    callRemote xHandle, index
+    haltTest
+END
+FUNC test, -1
+    VAR thisApp, s32
+    VAR caller, s32
+    thisApp thisApp
+    caller caller
+    VAR isEqual, s8
+    equ isEqual, caller, thisApp
+    logTestData isEqual
+    equ isEqual, caller, xHandle
+    logTestData isEqual
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test, -2
+    VAR bootName, s32
+    VAR bootHandle, s32
+    newAlloc bootName, 0, 6
+    wrtBuff bootName[0]:s8, appData[0]:s8, 6
+    openFile bootHandle, bootName
+    VAR index, s8
+    findFunc index, bootHandle, -1
+    callRemote bootHandle, index
+END
+APP_DATA
+    DATA "wsBoot"
+END
+
+>>> EXPECT 1 0 0 1
 
 ========================================
 
