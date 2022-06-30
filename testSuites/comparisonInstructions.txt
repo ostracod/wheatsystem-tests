@@ -5,7 +5,7 @@
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, init_ID
-    VAR x, s32
+    VAR x, s8
     equ x, 25, 24
     logTestData x
     equ x, 25, 25
@@ -23,7 +23,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, init_ID
-    VAR x, s32
+    VAR x, s8
     nEqu x, 25, 24
     logTestData x
     nEqu x, 25, 25
@@ -41,7 +41,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, init_ID
-    VAR x, s32
+    VAR x, s8
     gre x, 25, 24
     logTestData x
     gre x, 25, 25
@@ -59,7 +59,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, init_ID
-    VAR x, s32
+    VAR x, s8
     nGre x, 25, 24
     logTestData x
     nGre x, 25, 25

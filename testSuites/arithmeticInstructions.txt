@@ -1,0 +1,112 @@
+
+========================================
+
+>>> TEST add
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    add x, 24, 3
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 27
+
+========================================
+
+>>> TEST sub
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    sub x, 24, 3
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 21
+
+========================================
+
+>>> TEST mul
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    mul x, 24, 3
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 72
+
+========================================
+
+>>> TEST div
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    div x, 24, 3
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 8
+
+========================================
+
+>>> TEST div_byZero
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    setErrJmp handleErr
+    div x, 24, 0
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 4
+
+========================================
+
+>>> TEST mod
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    mod x, 26, 10
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 6
+
+========================================
+
+>>> TEST mod_byZero
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR x, s8
+    setErrJmp handleErr
+    mod x, 24, 0
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 4
+
+========================================
+
+
