@@ -138,4 +138,200 @@ END
 
 ========================================
 
+>>> TEST appIsRunning
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    VAR isRunning, s8
+    appIsRunning isRunning, xHandle
+    logTestData isRunning
+    launch xHandle
+    appIsRunning isRunning, xHandle
+    logTestData isRunning
+    VAR index, s8
+    findFunc index, xHandle, -1
+    setErrJmp handleErr
+    callRemote xHandle, index
+    LBL handleErr
+    appIsRunning isRunning, xHandle
+    logTestData isRunning
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test, -1
+    quitApp
+END
+
+>>> EXPECT 0 1 0
+
+========================================
+
+>>> TEST appInitErr
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    VAR initErr, s8
+    VAR delay, s8
+    appInitErr initErr, xHandle
+    logTestData initErr
+    launch xHandle
+    wrt delay, 100
+    LBL loop1
+    sub delay, delay, 1
+    jmpNZ loop1, delay
+    appInitErr initErr, xHandle
+    logTestData initErr
+    VAR index, s8
+    findFunc index, xHandle, -1
+    callRemote xHandle, index
+    wrt delay, 100
+    LBL loop2
+    sub delay, delay, 1
+    jmpNZ loop2, delay
+    appInitErr initErr, xHandle
+    logTestData initErr
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+    wait
+    throw -10
+END
+FUNC test, -1
+    resume
+END
+
+>>> EXPECT 0 0 -10
+
+========================================
+
+>>> TEST appInitErr_openTwice
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    VAR initErr, s8
+    appInitErr initErr, xHandle
+    logTestData initErr
+    VAR index, s8
+    findFunc index, xHandle, -1
+    setErrJmp handleErr
+    callRemote xHandle, index
+    LBL handleErr
+    appInitErr initErr, xHandle
+    logTestData initErr
+    closeFile xHandle
+    openFile xHandle, xName
+    appInitErr initErr, xHandle
+    logTestData initErr
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+    throw -20
+END
+FUNC test, -1
+    quitApp
+END
+
+>>> EXPECT -20 -20 0
+
+========================================
+
+>>> TEST killApp
+
+>>> BYTECODE_FILE wsBoot 1 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop1
+    sub delay, delay, 1
+    jmpNZ loop1, delay
+    killApp xHandle
+    wrt delay, 100
+    LBL loop2
+    sub delay, delay, 1
+    jmpNZ loop2, delay
+    VAR isRunning, s8
+    appIsRunning isRunning, xHandle
+    logTestData isRunning
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+    setErrJmp handleErr
+    wait
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    quitApp
+END
+
+>>> EXPECT 14 0
+
+========================================
+
+>>> TEST killApp_killFunc
+
+>>> BYTECODE_FILE wsBoot 1 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    killApp xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    VAR isRunning, s8
+    appIsRunning isRunning, xHandle
+    logTestData isRunning
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC kill, kill_ID
+    logTestData 50
+    quitApp
+END
+
+>>> EXPECT 50 0
+
+========================================
+
 

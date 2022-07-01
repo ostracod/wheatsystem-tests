@@ -6,6 +6,11 @@ import * as childProcess from "child_process";
 import * as net from "net";
 import { Assembler, InstructionType, AssemblyError } from "wheatbytecode-asm";
 
+interface FileFlags {
+    isGuarded: boolean;
+    hasAdminPerm: boolean;
+}
+
 enum PacketType {
     ProcessLaunched = 1,
     DataLogged = 2,
@@ -124,20 +129,25 @@ class Test {
 abstract class TestFile {
     name: string;
     type: FileType;
-    isGuarded: boolean;
+    flags: FileFlags;
     lines: string[];
     
-    constructor(name: string, type: FileType, isGuarded: boolean) {
+    constructor(name: string, type: FileType, flags: FileFlags) {
         this.name = name;
         this.type = type;
-        this.isGuarded = isGuarded;
+        this.flags = flags;
         this.lines = [];
     }
     
     abstract createContentBuffer(): Buffer;
     
     async send(): Promise<void> {
-        const header = Buffer.from([this.name.length, this.type, this.isGuarded ? 1 : 0]);
+        const header = Buffer.from([
+            this.name.length,
+            this.type,
+            this.flags.isGuarded ? 1 : 0,
+            this.flags.hasAdminPerm ? 1 : 0,
+        ]);
         const body = Buffer.concat([
             header,
             Buffer.from(this.name),
@@ -150,8 +160,8 @@ abstract class TestFile {
 
 class BytecodeFile extends TestFile {
     
-    constructor(name: string, isGuarded: boolean) {
-        super(name, FileType.BytecodeApp, isGuarded);
+    constructor(name: string, flags: FileFlags) {
+        super(name, FileType.BytecodeApp, flags);
     }
     
     createContentBuffer(): Buffer {
@@ -290,6 +300,19 @@ const isSeparator = (text: string): boolean => {
     return true;
 };
 
+const getFileFlagsFromArgs = (args: string[], index: number): FileFlags => {
+    const isGuarded = (parseInt(args[index], 10) !== 0);
+    let hasAdminPerm: boolean;
+    const adminPermIndex = index + 1;
+    if (args.length > adminPermIndex) {
+        hasAdminPerm = (parseInt(args[adminPermIndex], 10) !== 0);
+    } else {
+        hasAdminPerm = false;
+    }
+    return { isGuarded, hasAdminPerm };
+};
+
+
 const parseTests = (lines: string[]): Test[] => {
     const output: Test[] = [];
     let currentTest: Test = null;
@@ -305,13 +328,13 @@ const parseTests = (lines: string[]): Test[] => {
                 currentTest = new Test(args[0]);
                 output.push(currentTest);
             } else if (command === "BYTECODE_FILE") {
-                const isGuarded = (parseInt(args[1], 10) !== 0);
-                currentFile = new BytecodeFile(args[0], isGuarded);
+                const flags = getFileFlagsFromArgs(args, 1);
+                currentFile = new BytecodeFile(args[0], flags);
                 currentTest.files.push(currentFile);
             } else if (command === "HEX_FILE") {
                 const fileType = parseInt(args[1], 10);
-                const isGuarded = (parseInt(args[2], 10) !== 0);
-                currentFile = new HexFile(args[0], fileType, isGuarded);
+                const flags = getFileFlagsFromArgs(args, 2);
+                currentFile = new HexFile(args[0], fileType, flags);
                 currentTest.files.push(currentFile);
             } else if (command === "EXPECT") {
                 args.forEach((arg) => {
@@ -349,7 +372,7 @@ const runTestSuite = async (
 const main = async (suiteFileName: string | null): Promise<void> => {
     const socketServer = await createSocket();
     console.log("Launching WheatSystem...");
-    childProcess.spawn(launchScriptPath, [socketPath]);
+    childProcess.spawn(launchScriptPath, [socketPath], { stdio: "inherit" });
     socketClient = await waitForSocketClient();
     socketClient.on("data", handleSocketData);
     console.log("Waiting for launch packet...");
