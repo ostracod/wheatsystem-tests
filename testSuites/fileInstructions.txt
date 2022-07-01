@@ -155,4 +155,355 @@ END
 
 ========================================
 
+>>> TEST openFile
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR yName, s32
+    VAR xHandle1, s32
+    VAR xHandle2, s32
+    VAR yHandle, s32
+    newAlloc xName, 0, 1
+    newAlloc yName, 0, 1
+    wrt xName[0]:s8, 120
+    wrt yName[0]:s8, 121
+    openFile xHandle1, xName
+    openFile xHandle2, xName
+    openFile yHandle, yName
+    VAR result, s32
+    fileSize result, xHandle1
+    logTestData result
+    allocCreator result, xHandle1
+    logTestData result
+    VAR isEqual, s8
+    equ isEqual, xHandle1, xHandle2
+    logTestData isEqual
+    equ isEqual, xHandle1, yHandle
+    logTestData isEqual
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+01 02 03 04 05
+
+>>> HEX_FILE y 0 0
+00
+
+>>> EXPECT 5 0 1 0
+
+========================================
+
+>>> TEST openFile_missing
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR yName, s32
+    VAR yHandle, s32
+    newAlloc yName, 0, 1
+    wrt yName[0]:s8, 121
+    setErrJmp handleErr
+    openFile yHandle, yName
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+    
+END
+
+>>> HEX_FILE x 0 0
+00
+
+>>> EXPECT 10
+
+========================================
+
+>>> TEST closeFile
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    VAR size, s32
+    fileSize size, xHandle
+    logTestData size
+    closeFile xHandle
+    setErrJmp handleErr
+    fileSize size, xHandle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+10 20 30
+
+>>> EXPECT 3 6
+
+========================================
+
+>>> TEST closeFile_openDepth
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    openFile xHandle, xName
+    openFile xHandle, xName
+    VAR size, s32
+    fileSize size, xHandle
+    logTestData size
+    closeFile xHandle
+    closeFile xHandle
+    closeFile xHandle
+    setErrJmp handleErr
+    closeFile xHandle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+11 22 33 44 55 66 77
+
+>>> EXPECT 7 6
+
+========================================
+
+>>> TEST readFile
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    VAR result1, s8
+    VAR result2, s32
+    readFile result1, xHandle, 0, 1
+    logTestData result1
+    readFile result2, xHandle, 1, 4
+    logTestData result2
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+28 30 01 00 00
+
+>>> EXPECT 40 304
+
+========================================
+
+>>> TEST readFile_invalidDest
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    VAR err, s8
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    readFile localFrame[6]:s8, xHandle, 0, 4
+    haltTest
+    LBL handleErr
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+28 30 01 00 00
+
+>>> EXPECT 4
+
+========================================
+
+>>> TEST readFile_invalidPos
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    VAR garbage, s8
+    readFile garbage, xHandle, 5, 1
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+28 30 01 00 00
+
+>>> EXPECT 5
+
+========================================
+
+>>> TEST readFile_negativeSize
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    VAR garbage, s8
+    readFile garbage, xHandle, 0, -1
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+28 30 01 00 00
+
+>>> EXPECT 4
+
+========================================
+
+>>> TEST wrtFile
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    wrtFile xHandle, 0, appData[4]:s8, 1
+    VAR result1, s8
+    readFile result1, xHandle, 0, 1
+    logTestData result1
+    wrtFile xHandle, 1, appData[0]:s8, 4
+    VAR result2, s32
+    readFile result2, xHandle, 1, 4
+    logTestData result2
+    haltTest
+END
+APP_DATA
+    DATA 12345:s32, 67:s8
+END
+
+>>> HEX_FILE x 0 0
+00 00 00 00 00
+
+>>> EXPECT 67 12345
+
+========================================
+
+>>> TEST wrtFile_invalidSource
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    wrtFile xHandle, 0, appData[2]:s8, 4
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+APP_DATA
+    DATA 12345:s32, 67:s8
+END
+
+>>> HEX_FILE x 0 0
+00 00 00 00 00
+
+>>> EXPECT 4
+
+========================================
+
+>>> TEST wrtFile_invalidPos
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    wrtFile xHandle, 2, appData[1]:s8, 4
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+APP_DATA
+    DATA 12345:s32, 67:s8
+END
+
+>>> HEX_FILE x 0 0
+00 00 00 00 00
+
+>>> EXPECT 4
+
+========================================
+
+>>> TEST wrtFile_negativeSize
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    wrtFile xHandle, 1, appData[1]:s8, -1
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+APP_DATA
+    DATA 12345:s32, 67:s8
+END
+
+>>> HEX_FILE x 0 0
+00 00 00 00 00
+
+>>> EXPECT 4
+
+========================================
+
 
