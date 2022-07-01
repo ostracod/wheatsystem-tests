@@ -163,6 +163,21 @@ class BytecodeFile extends TestFile {
     }
 }
 
+class HexFile extends TestFile {
+    
+    createContentBuffer(): Buffer {
+        const buffers: Buffer[] = [];
+        this.lines.forEach((line) => {
+            if (line.length > 0) {
+                const terms = line.split(" ");
+                const values = terms.map((term) => parseInt(term, 16));
+                buffers.push(Buffer.from(values));
+            }
+        });
+        return Buffer.concat(buffers);
+    }
+}
+
 class TestResult {
     suiteFileName: string;
     testName: string;
@@ -293,11 +308,18 @@ const parseTests = (lines: string[]): Test[] => {
                 const isGuarded = (parseInt(args[1], 10) !== 0);
                 currentFile = new BytecodeFile(args[0], isGuarded);
                 currentTest.files.push(currentFile);
+            } else if (command === "HEX_FILE") {
+                const fileType = parseInt(args[1], 10);
+                const isGuarded = (parseInt(args[2], 10) !== 0);
+                currentFile = new HexFile(args[0], fileType, isGuarded);
+                currentTest.files.push(currentFile);
             } else if (command === "EXPECT") {
                 args.forEach((arg) => {
                     const value = parseInt(arg, 10);
                     currentTest.expectedValues.push(value);
                 });
+            } else {
+                throw new Error(`Unrecognized test command "${command}".`);
             }
         } else if (isSeparator(line)) {
             currentTest = null;

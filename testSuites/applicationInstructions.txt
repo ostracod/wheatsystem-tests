@@ -1,0 +1,141 @@
+
+========================================
+
+>>> TEST launch
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    logTestData 100
+    launch xHandle
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+    logTestData 101
+    haltTest
+END
+
+>>> EXPECT 100 101
+
+========================================
+
+>>> TEST launch_twice
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    logTestData 90
+    launch xHandle
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    logTestData 91
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+    logTestData 80
+END
+
+>>> EXPECT 90 80 91
+
+========================================
+
+>>> TEST launch_invalidType
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    launch xHandle
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+00
+
+>>> EXPECT 3
+
+========================================
+
+>>> TEST thisApp
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR thisHandle, s32
+    VAR thisName, s32
+    thisApp thisHandle
+    fileName thisName, thisHandle
+    logTestData thisName[0]:s8
+    logTestData thisName[1]:s8
+    logTestData thisName[2]:s8
+    logTestData thisName[3]:s8
+    logTestData thisName[4]:s8
+    logTestData thisName[5]:s8
+    haltTest
+END
+
+>>> EXPECT 119 115 66 111 111 116
+
+========================================
+
+>>> TEST quitApp
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR index, s8
+    findFunc index, xHandle, -1
+    setErrJmp handleErr
+    callRemote xHandle, index
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test1, -1
+    logTestData 79
+    call test2
+    logTestData 78
+END
+FUNC test2, -2
+    logTestData 77
+    quitApp
+    logTestData 76
+END
+
+>>> EXPECT 79 77 11
+
+========================================
+
+
