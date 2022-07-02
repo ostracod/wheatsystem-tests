@@ -1,0 +1,160 @@
+
+========================================
+
+>>> TEST memSize
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR result, s8
+    VAR size1, s32
+    memSize size1
+    gre result, size1, 0
+    logTestData result
+    VAR garbage, s32
+    newAlloc garbage, 0, 100
+    VAR size2, s32
+    memSize size2
+    equ result, size1, size2
+    logTestData result
+    haltTest
+END
+
+>>> EXPECT 1 1
+
+========================================
+
+>>> TEST appMemSize
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR thisHandle, s32
+    thisApp thisHandle
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    VAR result, s8
+    VAR oldSize1, s32
+    VAR oldSize2, s32
+    appMemSize oldSize1, thisHandle
+    appMemSize oldSize2, xHandle
+    gre result, oldSize1, 0
+    logTestData result
+    gre result, oldSize2, 0
+    logTestData result
+    VAR garbage, s32
+    newAlloc garbage, 0, 100
+    VAR newSize1, s32
+    VAR newSize2, s32
+    appMemSize newSize1, thisHandle
+    appMemSize newSize2, xHandle
+    gre result, newSize1, oldSize1
+    logTestData result
+    equ result, newSize2, oldSize2
+    logTestData result
+    delAlloc garbage
+    VAR sizeAfterDel, s32
+    appMemSize sizeAfterDel, thisHandle
+    equ result, oldSize1, sizeAfterDel
+    logTestData result
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+END
+
+>>> EXPECT 1 1 1 1 1
+
+========================================
+
+>>> TEST memSizeLeft
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR result, s8
+    VAR size1, s32
+    memSizeLeft size1
+    gre result, size1, 0
+    logTestData result
+    VAR garbage, s32
+    newAlloc garbage, 0, 100
+    VAR size2, s32
+    memSizeLeft size2
+    gre result, size1, size2
+    logTestData result
+    delAlloc garbage
+    VAR size3, s32
+    memSizeLeft size3
+    equ result, size1, size3
+    logTestData result
+    haltTest
+END
+
+>>> EXPECT 1 1 1
+
+========================================
+
+>>> TEST volSize
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR result, s8
+    VAR size1, s32
+    volSize size1
+    gre result, size1, 0
+    logTestData result
+    VAR xName, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    newFile xName, 0, 0, 100
+    VAR size2, s32
+    volSize size2
+    equ result, size1, size2
+    logTestData result
+    haltTest
+END
+
+>>> EXPECT 1 1
+
+========================================
+
+>>> TEST volSizeLeft
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR result, s8
+    VAR size1, s32
+    volSizeLeft size1
+    gre result, size1, 0
+    logTestData result
+    VAR xName, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    newFile xName, 0, 0, 100
+    VAR size2, s32
+    volSizeLeft size2
+    gre result, size1, size2
+    logTestData result
+    VAR xHandle, s32
+    openFile xHandle, xName
+    delFile xHandle
+    VAR size3, s32
+    volSizeLeft size3
+    equ result, size1, size3
+    logTestData result
+    haltTest
+END
+
+>>> EXPECT 1 1 1
+
+========================================
+
+
