@@ -104,7 +104,7 @@ APP_DATA
     DATA 12:s8, 23:s8, 34:s8, 45:s8, 56:s8, 67:s8
 END
 
->>> EXPECT 4 4
+>>> EXPECT 6 6
 
 ========================================
 
@@ -128,7 +128,7 @@ APP_DATA
     DATA 12:s8, 23:s8, 34:s8
 END
 
->>> EXPECT 4
+>>> EXPECT 6
 
 ========================================
 
@@ -165,7 +165,7 @@ FUNC init, init_ID
     haltTest
 END
 
->>> EXPECT 4
+>>> EXPECT 6
 
 ========================================
 
@@ -201,7 +201,7 @@ FUNC init, init_ID
     haltTest
 END
 
->>> EXPECT 4
+>>> EXPECT 6
 
 ========================================
 
@@ -223,7 +223,7 @@ FUNC init, init_ID
     haltTest
 END
 
->>> EXPECT 6
+>>> EXPECT 7
 
 ========================================
 
@@ -241,7 +241,7 @@ FUNC init, init_ID
     haltTest
 END
 
->>> EXPECT 6
+>>> EXPECT 7
 
 ========================================
 

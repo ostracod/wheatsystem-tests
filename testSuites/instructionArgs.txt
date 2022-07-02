@@ -213,7 +213,7 @@ FUNC init, init_ID
     haltTest
 END
 
->>> EXPECT 9
+>>> EXPECT 10
 
 ========================================
 
@@ -327,7 +327,7 @@ FUNC init, init_ID
     haltTest
 END
 
->>> EXPECT 7 7
+>>> EXPECT 8 8
 
 ========================================
 
@@ -352,7 +352,7 @@ FUNC init, init_ID
     haltTest
 END
 
->>> EXPECT 6 6
+>>> EXPECT 7 7
 
 ========================================
 

@@ -134,7 +134,7 @@ FUNC test2, -2
     logTestData 76
 END
 
->>> EXPECT 79 77 11
+>>> EXPECT 79 77 12
 
 ========================================
 
@@ -298,7 +298,7 @@ FUNC init, init_ID
     quitApp
 END
 
->>> EXPECT 14 0
+>>> EXPECT 15 0
 
 ========================================
 
