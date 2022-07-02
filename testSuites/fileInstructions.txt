@@ -309,7 +309,33 @@ END
 
 ========================================
 
->>> TEST readFile_invalidDest
+>>> TEST readFile_destOutOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    VAR err, s8
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    readFile localFrame[9]:s8, xHandle, 0, 1
+    haltTest
+    LBL handleErr
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+28 30 01 00 00
+
+>>> EXPECT 5
+
+========================================
+
+>>> TEST readFile_destOverflow
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, init_ID
@@ -335,7 +361,7 @@ END
 
 ========================================
 
->>> TEST readFile_invalidPos
+>>> TEST readFile_sourceOutOfBounds
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, init_ID
@@ -359,6 +385,33 @@ END
 28 30 01 00 00
 
 >>> EXPECT 5
+
+========================================
+
+>>> TEST readFile_sourceOverflow
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    VAR garbage, s32
+    readFile garbage, xHandle, 2, 4
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+28 30 01 00 00
+
+>>> EXPECT 6
 
 ========================================
 
@@ -419,7 +472,7 @@ END
 
 ========================================
 
->>> TEST wrtFile_invalidSource
+>>> TEST wrtFile_destOutOfBounds
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, init_ID
@@ -429,7 +482,36 @@ FUNC init, init_ID
     wrt xName[0]:s8, 120
     openFile xHandle, xName
     setErrJmp handleErr
-    wrtFile xHandle, 0, appData[2]:s8, 4
+    wrtFile xHandle, 5, appData[1]:s8, 1
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+APP_DATA
+    DATA 12345:s32, 67:s8
+END
+
+>>> HEX_FILE x 0 0
+00 00 00 00 00
+
+>>> EXPECT 5
+
+========================================
+
+>>> TEST wrtFile_destOverflow
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    wrtFile xHandle, 2, appData[1]:s8, 4
     haltTest
     LBL handleErr
     VAR err, s8
@@ -448,7 +530,7 @@ END
 
 ========================================
 
->>> TEST wrtFile_invalidPos
+>>> TEST wrtFile_sourceOutOfBounds
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, init_ID
@@ -458,7 +540,36 @@ FUNC init, init_ID
     wrt xName[0]:s8, 120
     openFile xHandle, xName
     setErrJmp handleErr
-    wrtFile xHandle, 2, appData[1]:s8, 4
+    wrtFile xHandle, 0, appData[5]:s8, 1
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+APP_DATA
+    DATA 12345:s32, 67:s8
+END
+
+>>> HEX_FILE x 0 0
+00 00 00 00 00
+
+>>> EXPECT 5
+
+========================================
+
+>>> TEST wrtFile_sourceOverflow
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    wrtFile xHandle, 0, appData[2]:s8, 4
     haltTest
     LBL handleErr
     VAR err, s8

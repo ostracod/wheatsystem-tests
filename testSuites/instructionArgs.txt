@@ -64,6 +64,32 @@ END
 
 ========================================
 
+>>> TEST globalFrame_overflow
+
+>>> BYTECODE_FILE wsBoot 1
+VAR x, s8, 10
+FUNC init, init_ID
+    VAR err, s8
+    setErrJmp handleErr1
+    wrt globalFrame[9]:s32, 23
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s32
+    wrt garbage, globalFrame[9]:s32
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 6 6
+
+========================================
+
 >>> TEST localFrame
 
 >>> BYTECODE_FILE wsBoot 1
@@ -104,6 +130,32 @@ FUNC init, init_ID
 END
 
 >>> EXPECT 5 5
+
+========================================
+
+>>> TEST localFrame_overflow
+
+>>> BYTECODE_FILE wsBoot 1
+VAR err, s8
+VAR garbage, s32
+FUNC init, init_ID
+    VAR x, s8, 10
+    setErrJmp handleErr1
+    wrt localFrame[9]:s32, 34
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    wrt garbage, localFrame[9]:s32
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 6 6
 
 ========================================
 
@@ -157,6 +209,36 @@ END
 
 ========================================
 
+>>> TEST prevArgFrame_overflow
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    newArgFrame 10
+    call test
+END
+FUNC test
+    ARG x, s8, 10
+    VAR err, s8
+    setErrJmp handleErr1
+    wrt prevArgFrame[9]:s32, 45
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s32
+    wrt garbage, prevArgFrame[9]:s32
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 6 6
+
+========================================
+
 >>> TEST nextArgFrame
 
 >>> BYTECODE_FILE wsBoot 1
@@ -196,6 +278,32 @@ FUNC init, init_ID
 END
 
 >>> EXPECT 5 5
+
+========================================
+
+>>> TEST nextArgFrame_overflow
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR err, s8
+    newArgFrame 10
+    setErrJmp handleErr1
+    wrt nextArgFrame[9]:s32, 56
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s32
+    wrt garbage, nextArgFrame[9]:s32
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 6 6
 
 ========================================
 
@@ -262,6 +370,28 @@ END
 
 ========================================
 
+>>> TEST appData_overflow
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    setErrJmp handleErr
+    VAR garbage, s32
+    wrt garbage, appData[9]:s32
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+APP_DATA
+    DATA 6789:s32, 6789:s32, 67:s8, 67:s8
+END
+
+>>> EXPECT 6
+
+========================================
+
 >>> TEST heapAlloc
 
 >>> BYTECODE_FILE wsBoot 1
@@ -303,6 +433,33 @@ FUNC init, init_ID
 END
 
 >>> EXPECT 5 5
+
+========================================
+
+>>> TEST heapAlloc_outOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR alloc, s32
+    VAR err, s8
+    newAlloc alloc, 0, 10
+    setErrJmp handleErr1
+    wrt alloc[9]:s32, 78
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    VAR garbage, s32
+    wrt garbage, alloc[9]:s32
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 6 6
 
 ========================================
 

@@ -79,7 +79,37 @@ END
 
 ========================================
 
+
 >>> TEST wrtBuff_outOfBounds
+
+>>> BYTECODE_FILE wsBoot 1
+
+FUNC init, init_ID
+    VAR err, s8
+    VAR x, s8, 3
+    setErrJmp handleErr1
+    wrtBuff localFrame[?x + 3]:s8, appData[3]:s8, 3
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    wrtBuff x, appData[7]:s8, 3
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+APP_DATA
+    DATA 12:s8, 23:s8, 34:s8, 45:s8, 56:s8, 67:s8
+END
+
+>>> EXPECT 5 5
+
+========================================
+
+>>> TEST wrtBuff_overflow
 
 >>> BYTECODE_FILE wsBoot 1
 
