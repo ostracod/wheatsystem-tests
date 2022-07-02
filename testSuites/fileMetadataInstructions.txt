@@ -1,0 +1,208 @@
+
+========================================
+
+>>> TEST allFileNames
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR names, s32
+    allFileNames names
+    VAR size, s8
+    allocSize size, names
+    logTestData size
+    VAR name1, s32
+    VAR name2, s32
+    wrt name1, names[0]:s32
+    wrt name2, names[4]:s32
+    VAR wsBootName, s32
+    VAR testName, s32
+    VAR condition, s8
+    equ condition, name1[0]:s8, 119
+    jmpZ skip1, condition
+    wrt wsBootName, name1
+    wrt testName, name2
+    jmp skip2
+    LBL skip1
+    wrt wsBootName, name2
+    wrt testName, name1
+    LBL skip2
+    allocSize size, wsBootName
+    logTestData size
+    allocSize size, testName
+    logTestData size
+    logTestData wsBootName[0]:s8
+    logTestData wsBootName[1]:s8
+    logTestData wsBootName[2]:s8
+    logTestData wsBootName[3]:s8
+    logTestData wsBootName[4]:s8
+    logTestData wsBootName[5]:s8
+    logTestData testName[0]:s8
+    logTestData testName[1]:s8
+    logTestData testName[2]:s8
+    logTestData testName[3]:s8
+    haltTest
+END
+
+>>> HEX_FILE test 0 0
+00
+
+>>> EXPECT 8 6 4 119 115 66 111 111 116 116 101 115 116
+
+========================================
+
+>>> TEST fileExists
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xaName, s32
+    VAR xbName, s32
+    newAlloc xaName, 0, 2
+    newAlloc xbName, 0, 2
+    wrt xaName[0]:s8, 120
+    wrt xaName[1]:s8, 97
+    wrt xbName[0]:s8, 120
+    wrt xbName[1]:s8, 98
+    VAR result, s8
+    fileExists result, xaName
+    logTestData result
+    fileExists result, xbName
+    logTestData result
+    haltTest
+END
+
+>>> HEX_FILE xa 0 0
+00
+
+>>> EXPECT 1 0
+
+========================================
+
+>>> TEST fileName
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xaName, s32
+    VAR xaHandle, s32
+    newAlloc xaName, 0, 2
+    wrt xaName[0]:s8, 120
+    wrt xaName[1]:s8, 97
+    openFile xaHandle, xaName
+    VAR result, s32
+    fileName result, xaHandle
+    VAR size, s8
+    allocSize size, result
+    logTestData size
+    logTestData result[0]:s8
+    logTestData result[1]:s8
+    haltTest
+END
+
+>>> HEX_FILE xa 0 0
+00
+
+>>> EXPECT 2 120 97
+
+========================================
+
+>>> TEST fileType
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR name, s32
+    VAR handle, s32
+    VAR type, s8
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 120
+    openFile handle, name
+    fileType type, handle
+    closeFile handle
+    logTestData type
+    wrt name[0]:s8, 121
+    openFile handle, name
+    fileType type, handle
+    closeFile handle
+    logTestData type
+    wrt name[0]:s8, 122
+    openFile handle, name
+    fileType type, handle
+    closeFile handle
+    logTestData type
+    haltTest
+END
+
+>>> HEX_FILE x 2 0
+00
+
+>>> HEX_FILE y 1 0
+00
+
+>>> HEX_FILE z 0 0
+00
+
+>>> EXPECT 2 1 0
+
+========================================
+
+>>> TEST fileIsGuarded
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR name, s32
+    VAR handle, s32
+    VAR isGuarded, s8
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 120
+    openFile handle, name
+    fileIsGuarded isGuarded, handle
+    closeFile handle
+    logTestData isGuarded
+    wrt name[0]:s8, 121
+    openFile handle, name
+    fileIsGuarded isGuarded, handle
+    closeFile handle
+    logTestData isGuarded
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+00
+
+>>> HEX_FILE y 0 1
+00
+
+>>> EXPECT 0 1
+
+========================================
+
+>>> TEST fileSize
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR name, s32
+    VAR handle, s32
+    VAR size, s8
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 120
+    openFile handle, name
+    fileSize size, handle
+    closeFile handle
+    logTestData size
+    wrt name[0]:s8, 121
+    openFile handle, name
+    fileSize size, handle
+    closeFile handle
+    logTestData size
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+00 00 00
+
+>>> HEX_FILE y 0 0
+00 00 00 00 00 00 00 00 00 00
+
+>>> EXPECT 3 10
+
+========================================
+
+
