@@ -1,0 +1,147 @@
+
+========================================
+
+>>> TEST wellFormed
+
+>>> HEX_FILE wsBoot 1 0
+
+00 00 00 00
+01 00 00 00
+2C 00 00 00
+
+01 00 00 00
+00
+00 00 00 00
+01 00 00 00
+21 00 00 00
+0B 00 00 00
+
+00 20 00 00 00 5F
+C0 20 00 00
+C1
+
+>>> EXPECT 95
+
+========================================
+
+>>> TEST unknownOpcode_firstNybble
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    VAR err, s8
+    appInitErr err, xHandle
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+01 00 00 00
+22 00 00 00
+
+01 00 00 00
+00
+00 00 00 00
+00 00 00 00
+21 00 00 00
+01 00 00 00
+
+D0
+
+>>> EXPECT 2
+
+========================================
+
+>>> TEST unknownOpcode_secondNybble
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    VAR err, s8
+    appInitErr err, xHandle
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+01 00 00 00
+22 00 00 00
+
+01 00 00 00
+00
+00 00 00 00
+00 00 00 00
+21 00 00 00
+01 00 00 00
+
+65
+
+>>> EXPECT 2
+
+========================================
+
+>>> TEST funcBodyTooShort
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    VAR err, s8
+    appInitErr err, xHandle
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+01 00 00 00
+22 00 00 00
+
+01 00 00 00
+00
+00 00 00 00
+00 00 00 00
+21 00 00 00
+01 00 00 00
+
+60
+
+>>> EXPECT 5
+
+========================================
+
+
