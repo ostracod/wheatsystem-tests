@@ -20,6 +20,8 @@
 C0 20 00 00
 C1
 
+01 02 03
+
 >>> EXPECT 95
 
 ========================================
@@ -141,6 +143,287 @@ END
 60
 
 >>> EXPECT 5
+
+========================================
+
+>>> TEST invalidReferenceType
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    VAR err, s8
+    appInitErr err, xHandle
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+01 00 00 00
+23 00 00 00
+
+01 00 00 00
+00
+00 00 00 00
+00 00 00 00
+21 00 00 00
+02 00 00 00
+
+C0 70
+
+>>> EXPECT 3
+
+========================================
+
+>>> TEST invalidDataType
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    VAR err, s8
+    appInitErr err, xHandle
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+01 00 00 00
+23 00 00 00
+
+01 00 00 00
+00
+00 00 00 00
+00 00 00 00
+21 00 00 00
+02 00 00 00
+
+C0 02
+
+>>> EXPECT 3
+
+========================================
+
+>>> TEST funcOverlapping
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    launch xHandle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+02 00 00 00
+3F 00 00 00
+
+01 00 00 00
+00
+00 00 00 00
+00 00 00 00
+36 00 00 00
+06 00 00 00
+
+02 00 00 00
+00
+00 00 00 00
+00 00 00 00
+39 00 00 00
+06 00 00 00
+
+C0 00 01
+C0 00 02
+C0 00 03
+
+>>> EXPECT 9
+
+========================================
+
+>>> TEST funcGap
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    launch xHandle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+02 00 00 00
+3D 00 00 00
+
+01 00 00 00
+00
+00 00 00 00
+00 00 00 00
+36 00 00 00
+03 00 00 00
+
+02 00 00 00
+00
+00 00 00 00
+00 00 00 00
+3A 00 00 00
+03 00 00 00
+
+C0 00 01
+00
+C0 00 03
+
+>>> EXPECT 9
+
+========================================
+
+>>> TEST appDataPos
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    launch xHandle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+02 00 00 00
+3D 00 00 00
+
+01 00 00 00
+00
+00 00 00 00
+00 00 00 00
+36 00 00 00
+03 00 00 00
+
+02 00 00 00
+00
+00 00 00 00
+00 00 00 00
+39 00 00 00
+03 00 00 00
+
+C0 00 01
+C0 00 03
+00
+
+01 02 03
+
+>>> EXPECT 9
+
+========================================
+
+>>> TEST shortAppHeader
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    launch xHandle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+
+>>> EXPECT 9
+
+========================================
+
+>>> TEST shortFuncEntry
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    setErrJmp handleErr
+    launch xHandle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE x 1 0
+
+00 00 00 00
+01 00 00 00
+2C 00 00 00
+
+01 00 00 00
+
+>>> EXPECT 9
 
 ========================================
 
