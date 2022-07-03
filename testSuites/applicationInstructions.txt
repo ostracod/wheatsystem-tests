@@ -374,4 +374,57 @@ END
 
 ========================================
 
+>>> TEST killApp_stateErr
+
+>>> BYTECODE_FILE wsBoot 1 1
+FUNC init, init_ID
+    VAR name, s32
+    VAR xHandle, s32
+    VAR yHandle, s32
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 120
+    openFile xHandle, name
+    launch xHandle
+    wrt name[0]:s8, 121
+    openFile yHandle, name
+    launch yHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    killApp xHandle
+    wait
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test, -1
+    setErrJmp loop
+    LBL loop
+    wait
+END
+
+>>> BYTECODE_FILE y 0
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    VAR index, s8
+    findFunc index, xHandle, -1
+    setErrJmp handleErr
+    callRemote xHandle, index
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 12
+
+========================================
+
 
