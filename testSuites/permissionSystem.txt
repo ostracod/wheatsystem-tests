@@ -85,6 +85,7 @@ FUNC init, init_ID
     VAR err, s8
     err err
     logTestData err
+    logTestData guardedAlloc[0]:s8
     haltTest
 END
 
@@ -100,7 +101,7 @@ FUNC test, -1
     wrt alloc[0]:s8, 42
 END
 
->>> EXPECT 40 41 13
+>>> EXPECT 40 41 13 41
 
 ========================================
 
@@ -128,6 +129,7 @@ FUNC init, init_ID
     launch handle
     findFunc index, handle, -1
     newAlloc guardedAlloc, 1, 1
+    wrt guardedAlloc[0]:s8, 95
     newArgFrame 4
     wrt nextArgFrame[0]:s32, guardedAlloc
     setErrJmp handleErr2
@@ -136,6 +138,7 @@ FUNC init, init_ID
     LBL handleErr2
     err err
     logTestData err
+    logTestData guardedAlloc[0]:s8
     wrt name[0]:s8, 121
     openFile handle, name
     launch handle
@@ -165,11 +168,11 @@ FUNC test, -1
     delAlloc alloc
 END
 
->>> EXPECT 7 13 7
+>>> EXPECT 7 13 95 7
 
 ========================================
 
->>> TEST allocAttrs
+>>> TEST setAllocAttrs
 
 >>> BYTECODE_FILE wsBoot 0
 FUNC init, init_ID
@@ -187,7 +190,6 @@ FUNC init, init_ID
     openFile handle, name
     launch handle
     findFunc index, handle, -1
-    newAlloc guardedAlloc, 1, 1
     newArgFrame 4
     wrt nextArgFrame[0]:s32, guardedAlloc
     setErrJmp handleErr
@@ -197,12 +199,13 @@ FUNC init, init_ID
     VAR err, s8
     err err
     logTestData err
+    allocAttrs attrs, guardedAlloc
+    logTestData attrs
     setAllocAttrs guardedAlloc, 3
     wrt name[0]:s8, 121
     openFile handle, name
     launch handle
     findFunc index, handle, -1
-    newAlloc guardedAlloc, 1, 1
     newArgFrame 4
     wrt nextArgFrame[0]:s32, guardedAlloc
     callRemote handle, index
@@ -223,7 +226,105 @@ FUNC test, -1
     setAllocAttrs alloc, 1
 END
 
->>> EXPECT 3 13 1
+>>> EXPECT 3 13 3 1
+
+========================================
+
+>>> TEST callRemote
+
+>>> BYTECODE_FILE wsBoot 0
+FUNC init, init_ID
+    VAR thisHandle, s32
+    thisApp thisHandle
+    callRemote thisHandle, guardedFunc
+    VAR name, s32
+    VAR handle, s32
+    VAR index, s8
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 120
+    openFile handle, name
+    launch handle
+    findFunc index, handle, -1
+    callRemote handle, index
+    wrt name[0]:s8, 121
+    openFile handle, name
+    launch handle
+    findFunc index, handle, -1
+    setErrJmp handleErr
+    callRemote handle, index
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+FUNC guardedFunc, -1, guarded
+    logTestData 88
+END
+
+>>> BYTECODE_FILE x 0 1
+FUNC test, -1
+    VAR caller, s32
+    VAR index, s8
+    caller caller
+    findFunc index, caller, -1
+    callRemote caller, index
+END
+
+>>> BYTECODE_FILE y 0 0
+FUNC test, -1
+    VAR caller, s32
+    VAR index, s8
+    caller caller
+    findFunc index, caller, -1
+    callRemote caller, index
+END
+
+>>> EXPECT 88 88 13
+
+========================================
+
+>>> TEST readFile
+
+>>> BYTECODE_FILE wsBoot 0 1
+FUNC init, init_ID
+    VAR name, s32
+    VAR handle, s32
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 121
+    openFile handle, name
+    VAR result, s8
+    readFile result, handle, 0, 1
+    closeFile handle
+    logTestData result
+    wrt name[0]:s8, 120
+    openFile handle, name
+    launch handle
+END
+
+>>> BYTECODE_FILE x 0 0
+FUNC init, init_ID
+    VAR yName, s32
+    VAR yHandle, s32
+    newAlloc yName, 0, 1
+    wrt yName[0]:s8, 121
+    openFile yHandle, yName
+    setErrJmp handleErr
+    VAR result, s8
+    readFile result, yHandle, 0, 1
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> HEX_FILE y 0 1
+72
+
+>>> EXPECT 114 13
 
 ========================================
 
