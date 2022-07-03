@@ -328,4 +328,186 @@ END
 
 ========================================
 
+>>> TEST wrtFile
+
+>>> BYTECODE_FILE wsBoot 0 1
+FUNC init, init_ID
+    VAR name, s32
+    VAR xHandle, s32
+    VAR yHandle, s32
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 121
+    openFile yHandle, name
+    wrtFile yHandle, 0, appData[0]:s8, 1
+    VAR result, s8
+    readFile result, yHandle, 0, 1
+    logTestData result
+    wrt name[0]:s8, 120
+    openFile xHandle, name
+    launch xHandle
+    VAR index, s8
+    findFunc index, xHandle, -1
+    newArgFrame 4
+    wrt nextArgFrame[0]:s32, yHandle
+    callRemote xHandle, index
+    readFile result, yHandle, 0, 1
+    logTestData result
+    haltTest
+END
+APP_DATA
+    DATA 73
+END
+
+>>> BYTECODE_FILE x 0 0
+FUNC test, -1
+    ARG handle, s32
+    setErrJmp handleErr
+    wrtFile handle, 0, appData[0]:s8, 1
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+END
+APP_DATA
+    DATA 73
+END
+
+>>> HEX_FILE y 0 1
+00
+
+>>> EXPECT 73 13 73
+
+========================================
+
+>>> TEST delFile
+
+>>> BYTECODE_FILE wsBoot 0 1
+FUNC init, init_ID
+    VAR name, s32
+    VAR handle, s32
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 121
+    openFile handle, name
+    delFile handle
+    VAR result, s8
+    fileExists result, name
+    logTestData result
+    wrt name[0]:s8, 120
+    openFile handle, name
+    launch handle
+END
+
+>>> BYTECODE_FILE x 0 0
+FUNC init, init_ID
+    VAR name, s32
+    VAR handle, s32
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 122
+    openFile handle, name
+    setErrJmp handleErr
+    delFile handle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    VAR result, s8
+    fileExists result, name
+    logTestData result
+    haltTest
+END
+
+>>> HEX_FILE y 0 1
+00
+
+>>> HEX_FILE z 0 1
+00
+
+>>> EXPECT 0 13 1
+
+========================================
+
+>>> TEST killApp
+
+>>> BYTECODE_FILE wsBoot 0
+FUNC init, init_ID
+    VAR name, s32
+    VAR handle, s32
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 120
+    openFile handle, name
+    launch handle
+    setErrJmp handleErr
+    killApp handle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+END
+
+>>> EXPECT 13
+
+========================================
+
+>>> TEST giveAdminPerm
+
+>>> BYTECODE_FILE wsBoot 0
+FUNC init, init_ID
+    VAR name, s32
+    VAR handle, s32
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 120
+    openFile handle, name
+    setErrJmp handleErr
+    giveAdminPerm handle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+END
+
+>>> EXPECT 13
+
+========================================
+
+>>> TEST delAdminPerm
+
+>>> BYTECODE_FILE wsBoot 0
+FUNC init, init_ID
+    VAR name, s32
+    VAR handle, s32
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 120
+    openFile handle, name
+    setErrJmp handleErr
+    delAdminPerm handle
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+END
+
+>>> EXPECT 13
+
+========================================
+
 
