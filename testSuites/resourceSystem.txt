@@ -1,0 +1,243 @@
+
+========================================
+
+>>> TEST capacityErr_memory
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR memSizeLeft, s32
+    VAR allocSize, s32
+    VAR garbage, s32
+    memSizeLeft memSizeLeft
+    div allocSize, memSizeLeft, 2
+    logTestData 10
+    newAlloc garbage, 0, allocSize
+    logTestData 20
+    memSizeLeft memSizeLeft
+    add allocSize, memSizeLeft, 1
+    setErrJmp handleErr
+    newAlloc garbage, 0, allocSize
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 10 20 14
+
+========================================
+
+>>> TEST capacityErr_storage
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR volSizeLeft, s32
+    VAR fileSize, s32
+    VAR exists, s8
+    VAR name, s32
+    volSizeLeft volSizeLeft
+    div fileSize, fileSize, 2
+    newAlloc name, 0, 1
+    wrt name[0]:s8, 120
+    logTestData 30
+    newFile name, 0, 0, fileSize
+    logTestData 40
+    fileExists exists, name
+    logTestData exists
+    volSizeLeft volSizeLeft
+    add fileSize, volSizeLeft, 1
+    wrt name[0]:s8, 121
+    setErrJmp handleErr
+    newFile name, 0, 0, fileSize
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    fileExists exists, name
+    logTestData exists
+    haltTest
+END
+
+>>> EXPECT 30 40 1 14 0
+
+========================================
+
+>>> TEST memoryThrottle_killFunc
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR memSizeLeft, s32
+    VAR condition, s8
+    VAR garbage, s32
+    setErrJmp handleErr
+    LBL loop
+    newAlloc garbage, 0, 100
+    memSizeLeft memSizeLeft
+    gre condition, memSizeLeft, 200
+    jmpNZ loop, condition
+    wait
+    LBL handleErr
+    logTestData 101
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+FUNC kill, kill_ID
+    logTestData 100
+    haltTest
+END
+
+>>> EXPECT 100
+
+========================================
+
+>>> TEST memoryThrottle_throttleErr
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR memSizeLeft, s32
+    VAR condition, s8
+    VAR garbage, s32
+    setErrJmp handleErr
+    LBL loop
+    newAlloc garbage, 0, 100
+    memSizeLeft memSizeLeft
+    gre condition, memSizeLeft, 200
+    jmpNZ loop, condition
+    wait
+    LBL handleErr
+    logTestData 101
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+FUNC kill, kill_ID
+    logTestData 100
+END
+
+>>> EXPECT 100 101 15
+
+========================================
+
+>>> TEST memoryThrottle_hardKill
+
+>>> BYTECODE_FILE wsBoot 0
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    LBL loop
+    VAR isRunning, s8
+    appIsRunning isRunning, xHandle
+    jmpNZ loop, isRunning
+    logTestData 102
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC init, init_ID
+    VAR memSizeLeft, s32
+    VAR condition, s8
+    VAR garbage, s32
+    setErrJmp handleErr
+    LBL loop1
+    newAlloc garbage, 0, 100
+    memSizeLeft memSizeLeft
+    gre condition, memSizeLeft, 200
+    jmpNZ loop1, condition
+    LBL loop2
+    wait
+    LBL handleErr
+    logTestData 101
+    VAR err, s8
+    err err
+    logTestData err
+    jmp loop2
+END
+FUNC kill, kill_ID
+    logTestData 100
+END
+
+>>> EXPECT 100 101 15 102
+
+========================================
+
+>>> TEST memoryThrottle_favorLargeUsage
+
+>>> BYTECODE_FILE wsBoot 0
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR memSizeLeft, s32
+    VAR condition, s8
+    VAR garbage, s32
+    LBL loop
+    newAlloc garbage, 0, 100
+    memSizeLeft memSizeLeft
+    gre condition, memSizeLeft, 200
+    jmpNZ loop, condition
+    wait
+END
+FUNC kill, kill_ID
+    logTestData 50
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC kill, kill_ID
+    logTestData 51
+    haltTest
+END
+
+>>> EXPECT 50
+
+========================================
+
+>>> TEST memoryThrottle_favorNonAdmin
+
+>>> BYTECODE_FILE wsBoot 0 1
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR memSizeLeft, s32
+    VAR condition, s8
+    VAR garbage, s32
+    LBL loop
+    newAlloc garbage, 0, 100
+    memSizeLeft memSizeLeft
+    gre condition, memSizeLeft, 200
+    jmpNZ loop, condition
+    wait
+END
+FUNC kill, kill_ID
+    logTestData 50
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0 0
+FUNC kill, kill_ID
+    logTestData 51
+    haltTest
+END
+
+>>> EXPECT 51
+
+========================================
+
+
