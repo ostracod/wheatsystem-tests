@@ -165,6 +165,7 @@ FUNC init, init_ID
     findFunc index, xHandle, -30
     callRemote xHandle, index
     logTestData 7
+    haltTest
 END
 
 >>> BYTECODE_FILE x 0
@@ -197,6 +198,7 @@ FUNC init, init_ID
     findFunc index, xHandle, -10
     callRemote xHandle, index
     logTestData 11
+    haltTest
 END
 FUNC test, -15
     logTestData 30
@@ -321,6 +323,52 @@ APP_DATA
 END
 
 >>> EXPECT 1 0 0 1
+
+========================================
+
+>>> TEST funcIsGuarded
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR thisHandle, s32
+    thisApp thisHandle
+    VAR isGuarded, s8
+    funcIsGuarded isGuarded, thisHandle, test1
+    logTestData isGuarded
+    funcIsGuarded isGuarded, thisHandle, test2
+    logTestData isGuarded
+END
+FUNC test1
+END
+FUNC test2, guarded
+END
+
+>>> EXPECT 0 1
+
+========================================
+
+>>> TEST funcIsGuarded_invalidIndex
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR thisHandle, s32
+    thisApp thisHandle
+    setErrJmp handleErr
+    VAR isGuarded, s8
+    funcIsGuarded isGuarded, thisHandle, 3
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+FUNC test1
+END
+FUNC test2, guarded
+END
+
+>>> EXPECT 5
 
 ========================================
 
