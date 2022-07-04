@@ -12,6 +12,10 @@ export enum PacketType {
     CreateFile = 5,
     StartSystem = 6,
     QuitProcess = 7,
+    CreateAllocation = 8,
+    DeleteAllocation = 9,
+    CreatedAllocation = 10,
+    DeletedAllocation = 11,
 }
 
 export enum FileType {

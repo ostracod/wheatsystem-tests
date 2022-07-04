@@ -153,19 +153,19 @@ const parseTests = (lines: string[]): Test[] => {
 }
 
 export const runTestSuite = async (
-    resultsDestination: TestResult[],
-    socket: WsSocket,
-    fileName: string,
-): Promise<void> => {
+    socket: WsSocket, fileName: string,
+): Promise<TestResult[]> => {
     console.log(`Running test suite "${fileName}"...`);
     const filePath = pathUtils.join(testSuitesDirectoryPath, fileName);
     const lines = fs.readFileSync(filePath, "utf8").split("\n");
     const tests = parseTests(lines);
+    const output: TestResult[] = [];
     for (const test of tests) {
         const testPassed = await test.run(socket);
-        resultsDestination.push(new TestResult(fileName, test.name, testPassed));
+        output.push(new TestResult(fileName, test.name, testPassed));
     }
     console.log(`Finished running test suite "${fileName}".`);
+    return output;
 };
 
 
