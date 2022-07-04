@@ -21,10 +21,7 @@ const performWithWheatSystem = async (
     childProcess.spawn(launchScriptPath, [socketPath], { stdio: "inherit" });
     await socket.waitForClient();
     console.log("Waiting for launch packet...");
-    const packet = await socket.receive();
-    if (packet.type !== PacketType.ProcessLaunched) {
-        throw new Error(`Unexpected packet type ${packet.type}!`);
-    }
+    await socket.receiveWithType(PacketType.ProcessLaunched);
     await operation(socket);
     await socket.sendSimple(PacketType.QuitProcess);
     await socket.close();

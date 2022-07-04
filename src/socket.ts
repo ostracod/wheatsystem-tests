@@ -123,6 +123,14 @@ export class WsSocket {
         });
     }
     
+    async receiveWithType(type: PacketType): Promise<Packet> {
+        const packet = await this.receive();
+        if (packet.type !== type) {
+            throw new Error(`Unexpected packet type ${packet.type}!`);
+        }
+        return packet;
+    }
+    
     async send(packet: Packet): Promise<void> {
         const buffer = packet.createBuffer();
         await this.client.write(buffer);

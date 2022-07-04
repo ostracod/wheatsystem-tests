@@ -19,7 +19,7 @@ To set up the tests:
 To run the tests:
 
 1. Update the contents of `launchWheatSystem.bash` to reference your implementation of WheatSystem.
-1. Start the test script: `node ./dist/runTests.js`
-1. Wait for the tests to finish.
+1. Run tests which are defined in the `./testSuites` directory: `node ./dist/runTests.js`
+1. Run heap allocation test: `node ./dist/runTests.js allocation`
 
 
