@@ -230,6 +230,41 @@ END
 
 ========================================
 
+>>> TEST guardedTextAlloc
+
+>>> BYTECODE_FILE wsBoot 0
+FUNC init, init_ID
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 1, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR index, s8
+    findFunc index, xHandle, -1
+    newArgFrame 4
+    wrt nextArgFrame[0]:s32, xName
+    callRemote xHandle, index
+END
+
+>>> BYTECODE_FILE x 0 0
+FUNC test, -1
+    ARG name, s32
+    setErrJmp handleErr
+    VAR garbage, s8
+    fileExists garbage, name
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 13
+
+========================================
+
 >>> TEST callRemote
 
 >>> BYTECODE_FILE wsBoot 0
