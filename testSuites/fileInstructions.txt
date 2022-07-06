@@ -286,6 +286,47 @@ END
 
 ========================================
 
+>>> TEST closeFile_runningApp
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, init_ID
+    VAR err, s8
+    VAR isRunning, s8
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    closeFile xHandle
+    appIsRunning isRunning, xHandle
+    logTestData isRunning
+    VAR index, s8
+    findFunc index, xHandle, -1
+    setErrJmp handleErr1
+    callRemote xHandle, index
+    haltTest
+    LBL handleErr1
+    err err
+    logTestData err
+    setErrJmp handleErr2
+    appIsRunning isRunning, xHandle
+    haltTest
+    LBL handleErr2
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test, -1
+    quitApp
+END
+
+>>> EXPECT 1 12 7
+
+========================================
+
 >>> TEST readFile
 
 >>> BYTECODE_FILE wsBoot 1
