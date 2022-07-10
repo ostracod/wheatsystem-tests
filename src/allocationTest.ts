@@ -52,6 +52,7 @@ export const verifyAllocations = (allocations: Allocation[]): void => {
 
 export const runAllocationTest = async (socket: WsSocket): Promise<void> => {
     console.log("Running heap allocation test...");
+    await socket.sendSimple(PacketType.ResetState);
     let memoryUsage = 0;
     const allocations: Allocation[] = [];
     for (let count = 0; count < 100000; count++) {
