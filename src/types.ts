@@ -16,6 +16,8 @@ export enum PacketType {
     DeleteAllocation = 9,
     CreatedAllocation = 10,
     DeletedAllocation = 11,
+    ValidateAllocation = 12,
+    ValidatedAllocation = 13,
 }
 
 export enum FileType {
