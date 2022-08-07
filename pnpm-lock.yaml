@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  wheatbytecode-asm: github:ostracod/wheatbytecode-asm#dev
+  wheatbytecode-asm: github:ostracod/wheatbytecode-asm#master
 
 dependencies:
   wheatbytecode-asm: github.com/ostracod/wheatbytecode-asm/06cfb3388ed8fb351eabf84024d4712b142b2ad8
