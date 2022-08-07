@@ -4,7 +4,7 @@
 >>> TEST readGuardedHeapAlloc
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR guardedAlloc, s32
     newAlloc guardedAlloc, 1, 1
     wrt guardedAlloc[0]:s8, 38
@@ -55,7 +55,7 @@ END
 >>> TEST writeGuardedHeapAlloc
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR guardedAlloc, s32
     newAlloc guardedAlloc, 1, 1
     wrt guardedAlloc[0]:s8, 40
@@ -108,7 +108,7 @@ END
 >>> TEST delAlloc
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR err, s8
     VAR garbage, s8
     VAR guardedAlloc, s32
@@ -175,7 +175,7 @@ END
 >>> TEST setAllocAttrs
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR attrs, s8
     VAR guardedAlloc, s32
     newAlloc guardedAlloc, 1, 1
@@ -233,7 +233,7 @@ END
 >>> TEST guardedTextAlloc
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 1, 1
@@ -268,7 +268,7 @@ END
 >>> TEST callRemote
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR thisHandle, s32
     thisApp thisHandle
     callRemote thisHandle, guardedFunc
@@ -323,7 +323,7 @@ END
 >>> TEST readFile
 
 >>> BYTECODE_FILE wsBoot 0 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR handle, s32
     newAlloc name, 0, 1
@@ -339,7 +339,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR yName, s32
     VAR yHandle, s32
     newAlloc yName, 0, 1
@@ -366,7 +366,7 @@ END
 >>> TEST wrtFile
 
 >>> BYTECODE_FILE wsBoot 0 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR xHandle, s32
     VAR yHandle, s32
@@ -418,7 +418,7 @@ END
 >>> TEST delFile
 
 >>> BYTECODE_FILE wsBoot 0 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR handle, s32
     newAlloc name, 0, 1
@@ -434,7 +434,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR handle, s32
     newAlloc name, 0, 1
@@ -466,7 +466,7 @@ END
 >>> TEST killApp
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR handle, s32
     newAlloc name, 0, 1
@@ -484,7 +484,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
 END
 
 >>> EXPECT 13
@@ -494,7 +494,7 @@ END
 >>> TEST giveAdminPerm
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR handle, s32
     newAlloc name, 0, 1
@@ -511,7 +511,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
 END
 
 >>> EXPECT 13
@@ -521,7 +521,7 @@ END
 >>> TEST delAdminPerm
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR handle, s32
     newAlloc name, 0, 1
@@ -538,7 +538,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
 END
 
 >>> EXPECT 13

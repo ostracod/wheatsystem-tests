@@ -4,7 +4,7 @@
 >>> TEST add
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     add x, 24, 3
     logTestData x
@@ -18,7 +18,7 @@ END
 >>> TEST sub
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     sub x, 24, 3
     logTestData x
@@ -32,7 +32,7 @@ END
 >>> TEST mul
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     mul x, 24, 3
     logTestData x
@@ -46,7 +46,7 @@ END
 >>> TEST div
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     div x, 24, 3
     logTestData x
@@ -60,7 +60,7 @@ END
 >>> TEST div_byZero
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     setErrJmp handleErr
     div x, 24, 0
@@ -79,7 +79,7 @@ END
 >>> TEST mod
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     mod x, 26, 10
     logTestData x
@@ -93,7 +93,7 @@ END
 >>> TEST mod_byZero
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     setErrJmp handleErr
     mod x, 24, 0

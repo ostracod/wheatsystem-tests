@@ -4,7 +4,7 @@
 >>> TEST jmp
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 1
     jmp skip
     logTestData 2
@@ -20,7 +20,7 @@ END
 >>> TEST jmp_outOfBounds
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     setErrJmp handleErr
     jmp 9999
     LBL handleErr
@@ -37,7 +37,7 @@ END
 >>> TEST jmp_notConstant
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     setErrJmp handleErr
     VAR offset, s8
     wrt offset, 0
@@ -56,7 +56,7 @@ END
 >>> TEST jmpZ
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 1
     jmpZ skip1, 0
     logTestData 2
@@ -75,7 +75,7 @@ END
 >>> TEST jmpNZ
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 1
     jmpNZ skip1, 0
     logTestData 2
@@ -94,7 +94,7 @@ END
 >>> TEST wait_resume
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     VAR testIndex, s32
@@ -107,7 +107,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 10
     wait
     logTestData 30
@@ -130,7 +130,7 @@ END
 >>> TEST resume_wait
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 40
     resume
     logTestData 50

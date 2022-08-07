@@ -4,7 +4,7 @@
 >>> TEST launch
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -15,7 +15,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 101
     haltTest
 END
@@ -27,7 +27,7 @@ END
 >>> TEST launch_twice
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -46,7 +46,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 80
 END
 
@@ -57,7 +57,7 @@ END
 >>> TEST launch_invalidType
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -82,7 +82,7 @@ END
 >>> TEST thisApp
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR thisHandle, s32
     VAR thisName, s32
     thisApp thisHandle
@@ -103,7 +103,7 @@ END
 >>> TEST quitApp
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -141,7 +141,7 @@ END
 >>> TEST appIsRunning
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -175,7 +175,7 @@ END
 >>> TEST appInitErr
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -205,7 +205,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     wait
     throw -10
 END
@@ -220,7 +220,7 @@ END
 >>> TEST appInitErr_openTwice
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -250,7 +250,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     throw -20
 END
 FUNC test, -1
@@ -264,7 +264,7 @@ END
 >>> TEST killApp
 
 >>> BYTECODE_FILE wsBoot 1 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -288,7 +288,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     setErrJmp handleErr
     wait
     LBL handleErr
@@ -305,7 +305,7 @@ END
 >>> TEST killApp_killFunc
 
 >>> BYTECODE_FILE wsBoot 1 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -325,7 +325,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC kill, kill_ID
+FUNC kill, wsKill.id
     logTestData 50
     quitApp
 END
@@ -337,7 +337,7 @@ END
 >>> TEST killApp_hard
 
 >>> BYTECODE_FILE wsBoot 1 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -359,7 +359,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     LBL loop
     setErrJmp handleErr
     wait
@@ -377,7 +377,7 @@ END
 >>> TEST killApp_stateErr
 
 >>> BYTECODE_FILE wsBoot 1 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR xHandle, s32
     VAR yHandle, s32
@@ -405,7 +405,7 @@ FUNC test, -1
 END
 
 >>> BYTECODE_FILE y 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1

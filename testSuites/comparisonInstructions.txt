@@ -4,7 +4,7 @@
 >>> TEST equ
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     equ x, 25, 24
     logTestData x
@@ -22,7 +22,7 @@ END
 >>> TEST nEqu
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     nEqu x, 25, 24
     logTestData x
@@ -40,7 +40,7 @@ END
 >>> TEST gre
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     gre x, 25, 24
     logTestData x
@@ -58,7 +58,7 @@ END
 >>> TEST nGre
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     nGre x, 25, 24
     logTestData x

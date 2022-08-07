@@ -4,7 +4,7 @@
 >>> TEST capacityErr_memory
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR memSizeLeft, s32
     VAR allocSize, s32
     VAR garbage, s32
@@ -32,7 +32,7 @@ END
 >>> TEST capacityErr_storage
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR volSizeLeft, s32
     VAR fileSize, s32
     VAR exists, s8
@@ -68,7 +68,7 @@ END
 >>> TEST memoryThrottle_killFunc
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR memSizeLeft, s32
     VAR condition, s8
     VAR garbage, s32
@@ -86,7 +86,7 @@ FUNC init, init_ID
     logTestData err
     haltTest
 END
-FUNC kill, kill_ID
+FUNC kill, wsKill.id
     logTestData 100
     haltTest
 END
@@ -98,7 +98,7 @@ END
 >>> TEST memoryThrottle_throttleErr
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR memSizeLeft, s32
     VAR condition, s8
     VAR garbage, s32
@@ -116,7 +116,7 @@ FUNC init, init_ID
     logTestData err
     haltTest
 END
-FUNC kill, kill_ID
+FUNC kill, wsKill.id
     logTestData 100
 END
 
@@ -127,7 +127,7 @@ END
 >>> TEST memoryThrottle_hardKill
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -143,7 +143,7 @@ FUNC init, init_ID
 END
 
 >>> BYTECODE_FILE x 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR memSizeLeft, s32
     VAR condition, s8
     VAR garbage, s32
@@ -162,7 +162,7 @@ FUNC init, init_ID
     logTestData err
     jmp loop2
 END
-FUNC kill, kill_ID
+FUNC kill, wsKill.id
     logTestData 100
 END
 
@@ -173,7 +173,7 @@ END
 >>> TEST memoryThrottle_favorLargeUsage
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -190,13 +190,13 @@ FUNC init, init_ID
     jmpNZ loop, condition
     wait
 END
-FUNC kill, kill_ID
+FUNC kill, wsKill.id
     logTestData 50
     haltTest
 END
 
 >>> BYTECODE_FILE x 0
-FUNC kill, kill_ID
+FUNC kill, wsKill.id
     logTestData 51
     haltTest
 END
@@ -208,7 +208,7 @@ END
 >>> TEST memoryThrottle_favorNonAdmin
 
 >>> BYTECODE_FILE wsBoot 0 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -225,13 +225,13 @@ FUNC init, init_ID
     jmpNZ loop, condition
     wait
 END
-FUNC kill, kill_ID
+FUNC kill, wsKill.id
     logTestData 50
     haltTest
 END
 
 >>> BYTECODE_FILE x 0 0
-FUNC kill, kill_ID
+FUNC kill, wsKill.id
     logTestData 51
     haltTest
 END
@@ -243,7 +243,7 @@ END
 >>> TEST memoryThrottle_convertErr
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -283,7 +283,7 @@ END
 >>> TEST memoryThrottle_preserveErr
 
 >>> BYTECODE_FILE wsBoot 0
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1

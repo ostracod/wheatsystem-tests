@@ -4,7 +4,7 @@
 >>> TEST setErrJump
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 1
     setErrJmp handleErr
     logTestData 2
@@ -23,7 +23,7 @@ END
 >>> TEST setErrJump_fromFunc
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 4
     setErrJmp handleErr
     logTestData 5
@@ -47,7 +47,7 @@ END
 >>> TEST clrErrJmp
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 10
     setErrJmp handleErr
     logTestData 11
@@ -77,7 +77,7 @@ END
 >>> TEST throw_err
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR err, s8
     err err
     logTestData err
@@ -97,7 +97,7 @@ END
 >>> TEST throw_invalidErrCode
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     setErrJmp handleErr
     throw 9999
     haltTest

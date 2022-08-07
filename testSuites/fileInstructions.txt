@@ -4,7 +4,7 @@
 >>> TEST newFile
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -33,7 +33,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 DEF nameLen, 200
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR fileName, s32
     newAlloc fileName, 0, nameLen
     VAR index, s32
@@ -59,7 +59,7 @@ END
 >>> TEST newFile_invalidType
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     newAlloc xName, 0, 1
     wrt xName[0]:s8, 120
@@ -80,7 +80,7 @@ END
 >>> TEST newFile_negativeSize
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     newAlloc xName, 0, 1
     wrt xName[0]:s8, 120
@@ -101,7 +101,7 @@ END
 >>> TEST newFile_duplicate
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     newAlloc xName, 0, 1
     wrt xName[0]:s8, 120
@@ -125,7 +125,7 @@ END
 >>> TEST delFile
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -158,7 +158,7 @@ END
 >>> TEST openFile
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR yName, s32
     VAR xHandle1, s32
@@ -199,7 +199,7 @@ END
 >>> TEST openFile_missing
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR yName, s32
     VAR yHandle, s32
     newAlloc yName, 0, 1
@@ -225,7 +225,7 @@ END
 >>> TEST closeFile
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -255,7 +255,7 @@ END
 >>> TEST closeFile_openDepth
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -289,7 +289,7 @@ END
 >>> TEST closeFile_runningApp
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR err, s8
     VAR isRunning, s8
     VAR xName, s32
@@ -330,7 +330,7 @@ END
 >>> TEST readFile
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -355,7 +355,7 @@ END
 >>> TEST readFile_destOutOfBounds
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     VAR err, s8
@@ -381,7 +381,7 @@ END
 >>> TEST readFile_destOverflow
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     VAR err, s8
@@ -407,7 +407,7 @@ END
 >>> TEST readFile_sourceOutOfBounds
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -434,7 +434,7 @@ END
 >>> TEST readFile_sourceOverflow
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -461,7 +461,7 @@ END
 >>> TEST readFile_negativeSize
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -488,7 +488,7 @@ END
 >>> TEST wrtFile
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -518,7 +518,7 @@ END
 >>> TEST wrtFile_destOutOfBounds
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -547,7 +547,7 @@ END
 >>> TEST wrtFile_destOverflow
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -576,7 +576,7 @@ END
 >>> TEST wrtFile_sourceOutOfBounds
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -605,7 +605,7 @@ END
 >>> TEST wrtFile_sourceOverflow
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -634,7 +634,7 @@ END
 >>> TEST wrtFile_negativeSize
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1

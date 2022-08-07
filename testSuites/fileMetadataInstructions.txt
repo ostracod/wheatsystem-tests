@@ -4,7 +4,7 @@
 >>> TEST allFileNames
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR names, s32
     allFileNames names
     VAR size, s8
@@ -53,7 +53,7 @@ END
 >>> TEST fileExists
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xaName, s32
     VAR xbName, s32
     newAlloc xaName, 0, 2
@@ -80,7 +80,7 @@ END
 >>> TEST fileName
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xaName, s32
     VAR xaHandle, s32
     newAlloc xaName, 0, 2
@@ -107,7 +107,7 @@ END
 >>> TEST fileType
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR handle, s32
     VAR type, s8
@@ -146,7 +146,7 @@ END
 >>> TEST fileType_notFileHandle
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR notHandle, s32
     newAlloc notHandle, 0, 100
     setErrJmp handleErr
@@ -167,7 +167,7 @@ END
 >>> TEST fileIsGuarded
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR handle, s32
     VAR isGuarded, s8
@@ -198,7 +198,7 @@ END
 >>> TEST fileSize
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR name, s32
     VAR handle, s32
     VAR size, s8

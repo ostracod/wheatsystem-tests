@@ -10,7 +10,7 @@ FUNC test2, -20
 END
 FUNC test3, -30
 END
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR thisHandle, s32
     thisApp thisHandle
     VAR index, s8
@@ -32,7 +32,7 @@ END
 >>> TEST findFunc_runningApp
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -69,7 +69,7 @@ END
 >>> TEST findFunc_notApp
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -105,7 +105,7 @@ END
 FUNC test3
     logTestData 60
 END
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 1
     call test1
     logTestData 2
@@ -136,7 +136,7 @@ END
 FUNC test3
     logTestData 60
 END
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 1
     call test1
     logTestData 2
@@ -156,7 +156,7 @@ FUNC test2
 END
 FUNC test3
 END
-FUNC init, init_ID
+FUNC init, wsInit.id
     setErrJmp handleErr
     call 4
     haltTest
@@ -174,7 +174,7 @@ END
 >>> TEST callRemote_sequential
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -214,7 +214,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 VAR xHandle, s32
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     newAlloc xName, 0, 1
     wrt xName[0]:s8, 120
@@ -262,7 +262,7 @@ END
 >>> TEST callRemote_invalidIndex
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -295,7 +295,7 @@ FUNC test
     ret
     logTestData 81
 END
-FUNC init, init_ID
+FUNC init, wsInit.id
     logTestData 70
     call test
     logTestData 71
@@ -310,7 +310,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 VAR xHandle, s32
-FUNC init, init_ID
+FUNC init, wsInit.id
     call test
     VAR xName, s32
     newAlloc xName, 0, 1
@@ -356,7 +356,7 @@ END
 >>> TEST funcIsGuarded
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR thisHandle, s32
     thisApp thisHandle
     VAR isGuarded, s8
@@ -377,7 +377,7 @@ END
 >>> TEST funcIsGuarded_invalidIndex
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR thisHandle, s32
     thisApp thisHandle
     setErrJmp handleErr

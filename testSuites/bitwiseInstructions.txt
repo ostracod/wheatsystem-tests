@@ -4,7 +4,7 @@
 >>> TEST bNot
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     bNot x, 0xAC
     logTestData x
@@ -18,7 +18,7 @@ END
 >>> TEST bOr
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     bOr x, 0x33, 0x0F
     logTestData x
@@ -32,7 +32,7 @@ END
 >>> TEST bAnd
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     bAnd x, 0x33, 0x0F
     logTestData x
@@ -46,7 +46,7 @@ END
 >>> TEST bXor
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     bXor x, 0x33, 0x0F
     logTestData x
@@ -60,7 +60,7 @@ END
 >>> TEST bLeft
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     bLeft x, 0x14, 0
     logTestData x
@@ -78,7 +78,7 @@ END
 >>> TEST bRight
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8
     bRight x, 0x14, 0
     logTestData x

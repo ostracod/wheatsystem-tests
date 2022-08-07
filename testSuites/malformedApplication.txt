@@ -29,7 +29,7 @@ C1
 >>> TEST unknownOpcode_firstNybble
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -69,7 +69,7 @@ D0
 >>> TEST unknownOpcode_secondNybble
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -109,7 +109,7 @@ END
 >>> TEST funcBodyTooShort
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -149,7 +149,7 @@ END
 >>> TEST invalidReferenceType
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -189,7 +189,7 @@ C0 70
 >>> TEST invalidDataType
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -229,7 +229,7 @@ C0 02
 >>> TEST funcOverlapping
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -276,7 +276,7 @@ C0 00 03
 >>> TEST funcGap
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -323,7 +323,7 @@ C0 00 03
 >>> TEST appDataPos
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -372,7 +372,7 @@ C0 00 03
 >>> TEST shortAppHeader
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1
@@ -399,7 +399,7 @@ END
 >>> TEST shortFuncEntry
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR xName, s32
     VAR xHandle, s32
     newAlloc xName, 0, 1

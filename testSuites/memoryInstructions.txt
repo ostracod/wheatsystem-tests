@@ -4,7 +4,7 @@
 >>> TEST wrt
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s32
     wrt x, 123
     logTestData x
@@ -19,7 +19,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8, 3
     wrtBuff x, appData[3]:s8, 3
     logTestData localFrame[?x]:s8
@@ -43,7 +43,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8, 3
     wrtBuff localFrame[?x + 2]:s8, 15:s8, 1
     wrtBuff localFrame[?x]:s8, 25624:s32, 2
@@ -61,7 +61,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8, 3
     wrt localFrame[?x]:s8, 12
     wrt localFrame[?x + 1]:s8, 23
@@ -81,7 +81,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8, 16
     wrtBuff x, appData[0]:s8, 16
     wrtBuff localFrame[?x + 1]:s8, localFrame[?x]:s8, 15
@@ -110,7 +110,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8, 3
     wrt localFrame[?x]:s8, 12
     wrt localFrame[?x + 1]:s8, 23
@@ -130,7 +130,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8, 16
     wrtBuff x, appData[0]:s8, 16
     wrtBuff localFrame[?x]:s8, localFrame[?x + 1]:s8, 15
@@ -159,7 +159,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR err, s8
     VAR x, s8, 3
     setErrJmp handleErr1
@@ -188,7 +188,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR err, s8
     VAR x, s8, 3
     setErrJmp handleErr1
@@ -218,7 +218,7 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR x, s8, 3
     setErrJmp handleErr
     wrtBuff x, appData[0]:s8, -1
@@ -240,7 +240,7 @@ END
 >>> TEST newArgFrame
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     newArgFrame 2
     wrt nextArgFrame[0]:s8, 12
     wrt nextArgFrame[1]:s8, 23
@@ -259,7 +259,7 @@ END
 >>> TEST newArgFrame_negativeSize
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     setErrJmp handleErr
     newArgFrame -1
     haltTest
@@ -277,7 +277,7 @@ END
 >>> TEST newAlloc
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR alloc, s32
     newAlloc alloc, 0, 2
     wrt alloc[0]:s8, 34
@@ -294,7 +294,7 @@ END
 >>> TEST newAlloc_negativeSize
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR alloc, s32
     setErrJmp handleErr
     newAlloc alloc, 0, -1
@@ -313,7 +313,7 @@ END
 >>> TEST delAlloc
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR alloc, s32
     newAlloc alloc, 0, 2
     delAlloc alloc
@@ -335,7 +335,7 @@ END
 >>> TEST delAlloc_invalidPtr
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     setErrJmp handleErr
     delAlloc 9999
     haltTest
@@ -353,7 +353,7 @@ END
 >>> TEST allocAttrs
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR alloc, s32
     VAR attrs, s8
     newAlloc alloc, 0, 2
@@ -378,7 +378,7 @@ END
 >>> TEST allocSize
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR alloc, s32
     VAR size, s8
     newAlloc alloc, 0, 5
@@ -397,7 +397,7 @@ END
 >>> TEST allocCreator
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR alloc1, s32
     VAR alloc2, s32
     newAlloc alloc1, 0, 5
@@ -442,7 +442,7 @@ END
 >>> TEST setAllocAttrs
 
 >>> BYTECODE_FILE wsBoot 1
-FUNC init, init_ID
+FUNC init, wsInit.id
     VAR alloc, s32
     VAR attrs, s8
     newAlloc alloc, 0, 2
