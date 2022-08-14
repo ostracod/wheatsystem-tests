@@ -465,4 +465,24 @@ END
 
 ========================================
 
+>>> TEST testAndSet
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    VAR value, s8
+    VAR oldValue, s8
+    wrt value, 0
+    testAndSet oldValue, value
+    logTestData value
+    logTestData oldValue
+    testAndSet oldValue, value
+    logTestData value
+    logTestData oldValue
+    haltTest
+END
+
+>>> EXPECT 1 0 1 1
+
+========================================
+
 
