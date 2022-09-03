@@ -1,0 +1,170 @@
+
+========================================
+
+>>> TEST newGate
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    VAR gate, s32
+    newGate gate, 0
+    waitGate gate
+    VAR creator, s32
+    VAR attrs, s8
+    allocCreator creator, gate
+    allocAttrs attrs, gate
+    bAnd attrs, attrs, sentryAllocAttr
+    logTestData creator
+    logTestData attrs
+    haltTest
+END
+
+>>> EXPECT 0 2
+
+========================================
+
+>>> TEST newGate_cleanUp
+
+>>> BYTECODE_FILE wsBoot 1 1
+FUNC init, wsInit.id
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR index, s8
+    findFunc index, xHandle, -1
+    newArgFrame 4
+    callRemote xHandle, index
+    VAR gate, s32
+    wrt gate, nextArgFrame[0]:s32
+    VAR creator, s32
+    allocCreator creator, gate
+    logTestData creator
+    killApp xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    setErrJmp handleErr
+    allocCreator creator, gate
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test, -1
+    ARG gate, s32
+    newGate gate, 0
+END
+
+>>> EXPECT 0 7
+
+========================================
+
+>>> TEST delGate
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    VAR gate, s32
+    newGate gate, 0
+    delGate gate
+    setErrJmp handleErr
+    VAR creator, s32
+    allocCreator creator, gate
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 7
+
+========================================
+
+>>> TEST delGate_duringWait
+
+>>> BYTECODE_FILE wsBoot 1 1
+FUNC init, wsInit.id
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR delay, s8
+    wrt delay, 100
+    LBL loop
+    sub delay, delay, 1
+    jmpNZ loop, delay
+    VAR index, s8
+    findFunc index, xHandle, -1
+    callRemote xHandle, index
+END
+
+>>> BYTECODE_FILE x 0
+VAR gate, s32
+FUNC init, wsInit.id
+    setErrJmp handleErr
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+FUNC test, -1
+    delGate gate
+END
+
+>>> EXPECT 11
+
+========================================
+
+>>> TEST delGate_notOwner
+
+>>> BYTECODE_FILE wsBoot 1 1
+FUNC init, wsInit.id
+    VAR xName, s32
+    VAR xHandle, s32
+    newAlloc xName, 0, 1
+    wrt xName[0]:s8, 120
+    openFile xHandle, xName
+    launch xHandle
+    VAR index, s8
+    findFunc index, xHandle, -1
+    newArgFrame 4
+    callRemote xHandle, index
+    VAR gate, s32
+    wrt gate, nextArgFrame[0]:s32
+    setErrJmp handleErr
+    delGate gate
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> BYTECODE_FILE x 0
+FUNC test, -1
+    ARG gate, s32
+    newGate gate, 0
+END
+
+>>> EXPECT 9
+
+========================================
+
+
