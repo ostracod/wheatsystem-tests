@@ -205,12 +205,15 @@ FUNC init, wsInit.id
 END
 
 >>> BYTECODE_FILE x 0
+VAR gate, s32
 FUNC init, wsInit.id
-    wait
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
     throw -10
 END
 FUNC test, -1
-    resume
+    openGate gate
 END
 
 >>> EXPECT 0 0 -10
@@ -290,7 +293,10 @@ END
 >>> BYTECODE_FILE x 0
 FUNC init, wsInit.id
     setErrJmp handleErr
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
     LBL handleErr
     VAR err, s8
     err err
@@ -362,7 +368,10 @@ END
 FUNC init, wsInit.id
     LBL loop
     setErrJmp handleErr
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
     LBL handleErr
     VAR err, s8
     err err
@@ -394,14 +403,20 @@ FUNC init, wsInit.id
     sub delay, delay, 1
     jmpNZ loop, delay
     killApp xHandle
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
 END
 
 >>> BYTECODE_FILE x 0
 FUNC test, -1
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
     setErrJmp loop
     LBL loop
-    wait
+    waitGate gate
 END
 
 >>> BYTECODE_FILE y 0

@@ -78,7 +78,10 @@ FUNC init, wsInit.id
     memSizeLeft memSizeLeft
     gre condition, memSizeLeft, 200
     jmpNZ loop, condition
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
     LBL handleErr
     logTestData 101
     VAR err, s8
@@ -108,7 +111,10 @@ FUNC init, wsInit.id
     memSizeLeft memSizeLeft
     gre condition, memSizeLeft, 200
     jmpNZ loop, condition
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
     LBL handleErr
     logTestData 101
     VAR err, s8
@@ -154,7 +160,10 @@ FUNC init, wsInit.id
     gre condition, memSizeLeft, 200
     jmpNZ loop1, condition
     LBL loop2
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
     LBL handleErr
     logTestData 101
     VAR err, s8
@@ -188,7 +197,10 @@ FUNC init, wsInit.id
     memSizeLeft memSizeLeft
     gre condition, memSizeLeft, 200
     jmpNZ loop, condition
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
 END
 FUNC kill, wsKill.id
     logTestData 50
@@ -223,7 +235,10 @@ FUNC init, wsInit.id
     memSizeLeft memSizeLeft
     gre condition, memSizeLeft, 200
     jmpNZ loop, condition
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
 END
 FUNC kill, wsKill.id
     logTestData 50
@@ -273,7 +288,10 @@ FUNC test, -1
     gre condition, memSizeLeft, 200
     jmpNZ loop1, condition
     LBL loop2
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
 END
 
 >>> EXPECT 12
@@ -317,7 +335,10 @@ FUNC test2
     gre condition, memSizeLeft, 200
     jmpNZ loop1, condition
     LBL loop2
-    wait
+    VAR gate, s32
+    newGate gate, 0
+    closeGate gate
+    waitGate gate
 END
 
 >>> EXPECT 15
