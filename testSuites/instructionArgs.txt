@@ -239,6 +239,29 @@ END
 
 ========================================
 
+>>> TEST prevArgFrame_leftOver
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    newArgFrame 10
+    call test
+END
+FUNC test
+    setErrJmp handleErr
+    VAR garbage, s8
+    wrt garbage, prevArgFrame[0]:s8
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 10
+
+========================================
+
 >>> TEST nextArgFrame
 
 >>> BYTECODE_FILE wsBoot 1
