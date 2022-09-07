@@ -16,9 +16,7 @@ FUNC init, wsInit.id
     wrt name2, names[4]:s32
     VAR wsBootName, s32
     VAR testName, s32
-    VAR condition, s8
-    equ condition, name1[0]:s8, 119
-    jmpZ skip1, condition
+    jmpNE skip1, name1[0]:s8, 119
     wrt wsBootName, name1
     wrt testName, name2
     jmp skip2

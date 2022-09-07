@@ -70,14 +70,12 @@ END
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, wsInit.id
     VAR memSizeLeft, s32
-    VAR condition, s8
     VAR garbage, s32
     setErrJmp handleErr
     LBL loop
     newAlloc garbage, 0, 100
     memSizeLeft memSizeLeft
-    gre condition, memSizeLeft, 200
-    jmpNZ loop, condition
+    jmpG loop, memSizeLeft, 200
     VAR gate, s32
     newGate gate, 0
     closeGate gate
@@ -103,14 +101,12 @@ END
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, wsInit.id
     VAR memSizeLeft, s32
-    VAR condition, s8
     VAR garbage, s32
     setErrJmp handleErr
     LBL loop
     newAlloc garbage, 0, 100
     memSizeLeft memSizeLeft
-    gre condition, memSizeLeft, 200
-    jmpNZ loop, condition
+    jmpG loop, memSizeLeft, 200
     VAR gate, s32
     newGate gate, 0
     closeGate gate
@@ -151,14 +147,12 @@ END
 >>> BYTECODE_FILE x 0
 FUNC init, wsInit.id
     VAR memSizeLeft, s32
-    VAR condition, s8
     VAR garbage, s32
     setErrJmp handleErr
     LBL loop1
     newAlloc garbage, 0, 100
     memSizeLeft memSizeLeft
-    gre condition, memSizeLeft, 200
-    jmpNZ loop1, condition
+    jmpG loop1, memSizeLeft, 200
     LBL loop2
     VAR gate, s32
     newGate gate, 0
@@ -190,13 +184,11 @@ FUNC init, wsInit.id
     openFile xHandle, xName
     launch xHandle
     VAR memSizeLeft, s32
-    VAR condition, s8
     VAR garbage, s32
     LBL loop
     newAlloc garbage, 0, 100
     memSizeLeft memSizeLeft
-    gre condition, memSizeLeft, 200
-    jmpNZ loop, condition
+    jmpG loop, memSizeLeft, 200
     VAR gate, s32
     newGate gate, 0
     closeGate gate
@@ -228,13 +220,11 @@ FUNC init, wsInit.id
     openFile xHandle, xName
     launch xHandle
     VAR memSizeLeft, s32
-    VAR condition, s8
     VAR garbage, s32
     LBL loop
     newAlloc garbage, 0, 100
     memSizeLeft memSizeLeft
-    gre condition, memSizeLeft, 200
-    jmpNZ loop, condition
+    jmpG loop, memSizeLeft, 200
     VAR gate, s32
     newGate gate, 0
     closeGate gate
@@ -280,13 +270,11 @@ END
 >>> BYTECODE_FILE x 0
 FUNC test, -1
     VAR memSizeLeft, s32
-    VAR condition, s8
     VAR garbage, s32
     LBL loop1
     newAlloc garbage, 0, 100
     memSizeLeft memSizeLeft
-    gre condition, memSizeLeft, 200
-    jmpNZ loop1, condition
+    jmpG loop1, memSizeLeft, 200
     LBL loop2
     VAR gate, s32
     newGate gate, 0
@@ -327,13 +315,11 @@ FUNC test1, -1
 END
 FUNC test2
     VAR memSizeLeft, s32
-    VAR condition, s8
     VAR garbage, s32
     LBL loop1
     newAlloc garbage, 0, 100
     memSizeLeft memSizeLeft
-    gre condition, memSizeLeft, 200
-    jmpNZ loop1, condition
+    jmpG loop1, memSizeLeft, 200
     LBL loop2
     VAR gate, s32
     newGate gate, 0

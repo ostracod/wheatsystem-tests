@@ -327,11 +327,12 @@ FUNC test, -1
     VAR caller, s32
     thisApp thisApp
     caller caller
-    VAR isEqual, s8
-    equ isEqual, caller, thisApp
-    logTestData isEqual
-    equ isEqual, caller, xHandle
-    logTestData isEqual
+    jmpNE skipLog1, caller, thisApp
+    logTestData 10
+    LBL skipLog1
+    jmpNE skipLog2, caller, xHandle
+    logTestData 20
+    LBL skipLog2
 END
 
 >>> BYTECODE_FILE x 0
@@ -349,7 +350,7 @@ APP_DATA
     DATA "wsBoot"
 END
 
->>> EXPECT 1 0 0 1
+>>> EXPECT 10 20
 
 ========================================
 

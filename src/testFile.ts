@@ -4,8 +4,8 @@ import { PacketType, FileType, FileFlags } from "./types.js";
 import { Packet } from "./socket.js";
 
 const extraInstructionTypes = [
-    new InstructionType("logTestData", 0xD0, 1),
-    new InstructionType("haltTest", 0xD1, 0),
+    new InstructionType("logTestData", 0xC0, 1),
+    new InstructionType("haltTest", 0xC1, 0),
 ];
 
 export abstract class TestFile {

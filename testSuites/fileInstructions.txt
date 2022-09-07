@@ -178,11 +178,11 @@ FUNC init, wsInit.id
     logTestData result
     allocAttrs result, xHandle1
     logTestData result
-    VAR isEqual, s8
-    equ isEqual, xHandle1, xHandle2
-    logTestData isEqual
-    equ isEqual, xHandle1, yHandle
-    logTestData isEqual
+    jmpNE halt, xHandle1, xHandle2
+    logTestData 10
+    jmpE halt, xHandle1, yHandle
+    logTestData 20
+    LBL halt
     haltTest
 END
 
@@ -192,7 +192,7 @@ END
 >>> HEX_FILE y 0 0
 00
 
->>> EXPECT 5 0 3 1 0
+>>> EXPECT 5 0 3 10 20
 
 ========================================
 

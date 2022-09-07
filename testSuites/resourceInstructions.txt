@@ -5,21 +5,20 @@
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, wsInit.id
-    VAR result, s8
     VAR size1, s32
     memSize size1
-    gre result, size1, 0
-    logTestData result
+    jmpNG halt, size1, 0
     VAR garbage, s32
     newAlloc garbage, 0, 100
     VAR size2, s32
     memSize size2
-    equ result, size1, size2
-    logTestData result
+    jmpNE halt, size1, size2
+    logTestData 111
+    LBL halt
     haltTest
 END
 
->>> EXPECT 1 1
+>>> EXPECT 111
 
 ========================================
 
@@ -40,30 +39,26 @@ FUNC init, wsInit.id
     LBL loop
     sub delay, delay, 1
     jmpNZ loop, delay
-    VAR result, s8
     VAR oldSize1, s32
     VAR oldSize2, s32
     appMemSize oldSize1, thisHandle
     appMemSize oldSize2, xHandle
-    gre result, oldSize1, 0
-    logTestData result
-    gre result, oldSize2, 0
-    logTestData result
+    jmpNG halt, oldSize1, 0
+    jmpNG halt, oldSize2, 0
     VAR garbage, s32
     newAlloc garbage, 0, 100
     VAR newSize1, s32
     VAR newSize2, s32
     appMemSize newSize1, thisHandle
     appMemSize newSize2, xHandle
-    gre result, newSize1, oldSize1
-    logTestData result
-    equ result, newSize2, oldSize2
-    logTestData result
+    jmpNG halt, newSize1, oldSize1
+    jmpNE halt, newSize2, oldSize2
     delAlloc garbage
     VAR sizeAfterDel, s32
     appMemSize sizeAfterDel, thisHandle
-    equ result, oldSize1, sizeAfterDel
-    logTestData result
+    jmpNE halt, oldSize1, sizeAfterDel
+    logTestData 111
+    LBL halt
     haltTest
 END
 
@@ -71,7 +66,7 @@ END
 FUNC init, wsInit.id
 END
 
->>> EXPECT 1 1 1 1 1
+>>> EXPECT 111
 
 ========================================
 
@@ -79,26 +74,24 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, wsInit.id
-    VAR result, s8
     VAR size1, s32
     memSizeLeft size1
-    gre result, size1, 0
-    logTestData result
+    jmpNG halt, size1, 0
     VAR garbage, s32
     newAlloc garbage, 0, 100
     VAR size2, s32
     memSizeLeft size2
-    gre result, size1, size2
-    logTestData result
+    jmpNG halt, size1, size2
     delAlloc garbage
     VAR size3, s32
     memSizeLeft size3
-    equ result, size1, size3
-    logTestData result
+    jmpNE halt, size1, size3
+    logTestData 111
+    LBL halt
     haltTest
 END
 
->>> EXPECT 1 1 1
+>>> EXPECT 111
 
 ========================================
 
@@ -106,23 +99,22 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, wsInit.id
-    VAR result, s8
     VAR size1, s32
     volSize size1
-    gre result, size1, 0
-    logTestData result
+    jmpNG halt, size1, 0
     VAR xName, s32
     newAlloc xName, 0, 1
     wrt xName[0]:s8, 120
     newFile xName, 0, 0, 100
     VAR size2, s32
     volSize size2
-    equ result, size1, size2
-    logTestData result
+    jmpNE halt, size1, size2
+    logTestData 111
+    LBL halt
     haltTest
 END
 
->>> EXPECT 1 1
+>>> EXPECT 111
 
 ========================================
 
@@ -130,30 +122,28 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, wsInit.id
-    VAR result, s8
     VAR size1, s32
     volSizeLeft size1
-    gre result, size1, 0
-    logTestData result
+    jmpNG halt, size1, 0
     VAR xName, s32
     newAlloc xName, 0, 1
     wrt xName[0]:s8, 120
     newFile xName, 0, 0, 100
     VAR size2, s32
     volSizeLeft size2
-    gre result, size1, size2
-    logTestData result
+    jmpNG halt, size1, size2
     VAR xHandle, s32
     openFile xHandle, xName
     delFile xHandle
     VAR size3, s32
     volSizeLeft size3
-    equ result, size1, size3
-    logTestData result
+    jmpNE halt, size1, size3
+    logTestData 111
+    LBL halt
     haltTest
 END
 
->>> EXPECT 1 1 1
+>>> EXPECT 111
 
 ========================================
 

@@ -92,9 +92,7 @@ FUNC init, wsInit.id
     add offset, ?x, index
     logTestData localFrame[offset]:s8
     add index, index, 1
-    VAR condition, s8
-    gre condition, index, 15
-    jmpZ loop, condition
+    jmpNG loop, index, 15
     haltTest
 END
 APP_DATA
@@ -141,9 +139,7 @@ FUNC init, wsInit.id
     add offset, ?x, index
     logTestData localFrame[offset]:s8
     add index, index, 1
-    VAR condition, s8
-    gre condition, index, 15
-    jmpZ loop, condition
+    jmpNG loop, index, 15
     haltTest
 END
 APP_DATA
@@ -418,15 +414,13 @@ FUNC init, wsInit.id
     VAR creator2, s32
     allocCreator creator1, alloc1
     allocCreator creator2, alloc2
-    VAR isEqual, s8
-    equ isEqual, creator1, thisHandle
-    logTestData isEqual
-    equ isEqual, creator1, xHandle
-    logTestData isEqual
-    equ isEqual, creator2, thisHandle
-    logTestData isEqual
-    equ isEqual, creator2, xHandle
-    logTestData isEqual
+    jmpNE halt, creator1, thisHandle
+    jmpE halt, creator1, xHandle
+    jmpE halt, creator2, thisHandle
+    jmpNE halt, creator2, xHandle
+    logTestData 111
+    LBL halt
+    haltTest
 END
 
 >>> BYTECODE_FILE x 0
@@ -435,7 +429,7 @@ FUNC test, -1
     newAlloc alloc, 0, 5
 END
 
->>> EXPECT 1 0 0 1
+>>> EXPECT 111
 
 ========================================
 
