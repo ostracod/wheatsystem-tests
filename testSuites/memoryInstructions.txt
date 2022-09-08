@@ -18,7 +18,6 @@ END
 >>> TEST wrtBuff
 
 >>> BYTECODE_FILE wsBoot 1
-
 FUNC init, wsInit.id
     VAR x, s8, 3
     wrtBuff x, appData[3]:s8, 3
@@ -42,7 +41,6 @@ END
 >>> TEST wrtBuff_constant
 
 >>> BYTECODE_FILE wsBoot 1
-
 FUNC init, wsInit.id
     VAR x, s8, 3
     wrtBuff localFrame[?x + 2]:s8, 15:s8, 1
@@ -60,7 +58,6 @@ END
 >>> TEST wrtBuff_shiftForward
 
 >>> BYTECODE_FILE wsBoot 1
-
 FUNC init, wsInit.id
     VAR x, s8, 3
     wrt localFrame[?x]:s8, 12
@@ -80,7 +77,6 @@ END
 >>> TEST wrtBuff_shiftForwardLarge
 
 >>> BYTECODE_FILE wsBoot 1
-
 FUNC init, wsInit.id
     VAR x, s8, 16
     wrtBuff x, appData[0]:s8, 16
@@ -107,7 +103,6 @@ END
 >>> TEST wrtBuff_shiftBackward
 
 >>> BYTECODE_FILE wsBoot 1
-
 FUNC init, wsInit.id
     VAR x, s8, 3
     wrt localFrame[?x]:s8, 12
@@ -127,7 +122,6 @@ END
 >>> TEST wrtBuff_shiftBackwardLarge
 
 >>> BYTECODE_FILE wsBoot 1
-
 FUNC init, wsInit.id
     VAR x, s8, 16
     wrtBuff x, appData[0]:s8, 16
@@ -154,7 +148,6 @@ END
 >>> TEST wrtBuff_outOfBounds
 
 >>> BYTECODE_FILE wsBoot 1
-
 FUNC init, wsInit.id
     VAR err, s8
     VAR x, s8, 3
@@ -183,7 +176,6 @@ END
 >>> TEST wrtBuff_overflow
 
 >>> BYTECODE_FILE wsBoot 1
-
 FUNC init, wsInit.id
     VAR err, s8
     VAR x, s8, 3
@@ -213,7 +205,6 @@ END
 >>> TEST wrtBuff_negativeSize
 
 >>> BYTECODE_FILE wsBoot 1
-
 FUNC init, wsInit.id
     VAR x, s8, 3
     setErrJmp handleErr
@@ -227,6 +218,51 @@ FUNC init, wsInit.id
 END
 APP_DATA
     DATA 12:s8, 23:s8, 34:s8
+END
+
+>>> EXPECT 6
+
+========================================
+
+>>> TEST fillBuff
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    VAR x, s8, 3
+    fillBuff x, 3, 5:s8
+    logTestData localFrame[?x]:s8
+    logTestData localFrame[?x + 1]:s8
+    logTestData localFrame[?x + 2]:s8
+    VAR y, s16, 3
+    fillBuff y, 6, 500:s16
+    logTestData localFrame[?y]:s16
+    logTestData localFrame[?y + 2]:s16
+    logTestData localFrame[?y + 4]:s16
+    VAR z, s32, 3
+    fillBuff z, 12, 50000:s32
+    logTestData localFrame[?z]:s32
+    logTestData localFrame[?z + 4]:s32
+    logTestData localFrame[?z + 8]:s32
+    haltTest
+END
+
+>>> EXPECT 5 5 5 500 500 500 50000 50000 50000
+
+========================================
+
+>>> TEST fillBuff_badSize
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    VAR x, s16, 3
+    setErrJmp handleErr
+    fillBuff x, 5, 5:s16
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
 END
 
 >>> EXPECT 6

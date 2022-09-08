@@ -6,6 +6,7 @@
 >>> BYTECODE_FILE wsBoot 1
 FUNC init, wsInit.id
     logTestData 12:s8
+    logTestData 123:s16
     logTestData 1234:s32
     setErrJmp handleErr
     wrt 12, 34
@@ -17,7 +18,7 @@ FUNC init, wsInit.id
     haltTest
 END
 
->>> EXPECT 12 1234 3
+>>> EXPECT 12 123 1234 3
 
 ========================================
 
@@ -25,16 +26,19 @@ END
 
 >>> BYTECODE_FILE wsBoot 1
 VAR x, s8
-VAR y, s32
+VAR y, s16
+VAR z, s32
 FUNC init, wsInit.id
     wrt x, 23
-    wrt y, 2345
+    wrt y, 234
+    wrt z, 2345
     logTestData x
     logTestData y
+    logTestData z
     haltTest
 END
 
->>> EXPECT 23 2345
+>>> EXPECT 23 234 2345
 
 ========================================
 
@@ -533,6 +537,40 @@ FUNC init, wsInit.id
 END
 
 >>> EXPECT 7 7
+
+========================================
+
+>>> TEST prevArg
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    VAR value, s16
+    add value, 5, prevArg
+    logTestData value
+    add value, prevArg, 2
+    logTestData value
+    haltTest
+END
+
+>>> EXPECT 10 12
+
+========================================
+
+>>> TEST prevArg_badPos
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    setErrJmp handleErr
+    add prevArg, 1, 2
+    haltTest
+    LBL handleErr
+    VAR err, s8
+    err err
+    logTestData err
+    haltTest
+END
+
+>>> EXPECT 11
 
 ========================================
 
