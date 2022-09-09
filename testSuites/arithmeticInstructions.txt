@@ -1,6 +1,36 @@
 
 ========================================
 
+>>> TEST inc
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    VAR x, s8
+    wrt x, 24
+    inc x
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 25
+
+========================================
+
+>>> TEST dec
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    VAR x, s8
+    wrt x, 24
+    dec x
+    logTestData x
+    haltTest
+END
+
+>>> EXPECT 23
+
+========================================
+
 >>> TEST add
 
 >>> BYTECODE_FILE wsBoot 1

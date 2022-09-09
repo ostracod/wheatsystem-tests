@@ -91,4 +91,92 @@ END
 
 ========================================
 
+>>> TEST jmpE
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    logTestData 1
+    jmpE skip1, 10, 20
+    logTestData 2
+    LBL skip1
+    jmpE skip2, 20, 20
+    logTestData 3
+    LBL skip2
+    jmpE skip3, 30, 20
+    logTestData 4
+    LBL skip3
+    logTestData 5
+    haltTest
+END
+
+>>> EXPECT 1 2 4 5
+
+========================================
+
+>>> TEST jmpNE
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    logTestData 1
+    jmpNE skip1, 10, 20
+    logTestData 2
+    LBL skip1
+    jmpNE skip2, 20, 20
+    logTestData 3
+    LBL skip2
+    jmpNE skip3, 30, 20
+    logTestData 4
+    LBL skip3
+    logTestData 5
+    haltTest
+END
+
+>>> EXPECT 1 3 5
+
+========================================
+
+>>> TEST jmpG
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    logTestData 1
+    jmpG skip1, 10, 20
+    logTestData 2
+    LBL skip1
+    jmpG skip2, 20, 20
+    logTestData 3
+    LBL skip2
+    jmpG skip3, 30, 20
+    logTestData 4
+    LBL skip3
+    logTestData 5
+    haltTest
+END
+
+>>> EXPECT 1 2 3 5
+
+========================================
+
+>>> TEST jmpNG
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    logTestData 1
+    jmpNG skip1, 10, 20
+    logTestData 2
+    LBL skip1
+    jmpNG skip2, 20, 20
+    logTestData 3
+    LBL skip2
+    jmpNG skip3, 30, 20
+    logTestData 4
+    LBL skip3
+    logTestData 5
+    haltTest
+END
+
+>>> EXPECT 1 4 5
+
+========================================
+
 
