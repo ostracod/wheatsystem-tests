@@ -6,7 +6,7 @@
         "build": "tsc"
     },
     "dependencies": {
-        "wheatbytecode-asm": "github:ostracod/wheatbytecode-asm#dev"
+        "wheatbytecode-asm": "github:ostracod/wheatbytecode-asm#master"
     },
     "devDependencies": {}
 }
