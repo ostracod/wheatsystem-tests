@@ -122,6 +122,49 @@ END
 
 ========================================
 
+>>> TEST newFile_afterDel
+
+>>> BYTECODE_FILE wsBoot 1
+FUNC init, wsInit.id
+    VAR xName, s32
+    VAR yName, s32
+    VAR zName, s32
+    VAR xHandle, s32
+    VAR yHandle, s32
+    VAR zHandle, s32
+    newAlloc xName, 0, 1
+    newAlloc yName, 0, 1
+    newAlloc zName, 0, 1
+    wrt xName[0]:s8, 120
+    wrt yName[0]:s8, 121
+    wrt zName[0]:s8, 122
+    newFile zName, 0, 0, 5
+    openFile xHandle, xName
+    delFile xHandle
+    newFile xName, 0, 0, 5
+    openFile zHandle, zName
+    delFile zHandle
+    newFile zName, 0, 0, 5
+    openFile xHandle, xName
+    delFile xHandle
+    newFile xName, 0, 0, 5
+    openFile zHandle, zName
+    delFile zHandle
+    openFile yHandle, yName
+    logTestData 77
+    haltTest
+END
+
+>>> HEX_FILE x 0 0
+00 01 02 03 04
+
+>>> HEX_FILE y 0 0
+05 06 07 08 09
+
+>>> EXPECT 77
+
+========================================
+
 >>> TEST delFile
 
 >>> BYTECODE_FILE wsBoot 1
